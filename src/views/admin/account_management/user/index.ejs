@@ -1,0 +1,28 @@
+<div class="form-container">
+    <form class="form-row" action="/customer" method="GET">
+        <div class="search-form">
+            <label>Search </label>
+            <input type="text" name="name" placeholder="Customer Name" value="<%= searchOptions.name %>">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+<br>
+<div class="row">
+<% customer.forEach(customer=> { %>
+    <div class="container">
+        <div>
+            <%= customer.name %>
+        </div>
+        <div>
+            <%= customer.email %>
+        </div>
+        <div>
+            <%= customer.state %>
+        </div>
+        <a href="/admin/manage-accounts/customer/<%= customer.id %>">View</a>
+        <a href="/admin/manage-accounts/customer/<%= customer.id %>/edit">Edit</a>
+        <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/customer/${customer.id}` }) %>
+    </div>
+            <% }) %>
+</div>

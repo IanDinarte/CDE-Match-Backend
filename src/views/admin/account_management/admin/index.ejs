@@ -1,0 +1,28 @@
+<div class="form-container">
+    <form action="/admin" method="GET">
+        <label>Search Admin</label>
+        <div class="search-form">
+            <input type="text" name="name" placeholder="Admin Name" value="<%= searchOptions.name %>">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+<br>
+<div class="row">
+    <% admin.forEach(admin=> { %>
+        <div class="container">
+            <div>
+                <%= admin.name %>
+            </div>
+            <div>
+                <%= admin.email %>
+            </div>
+            <div>
+                <%= admin.state %>
+            </div>
+            <a href="/admin/manage-accounts/admin/<%= admin.id %>">View</a>
+            <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Edit</a>
+            <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}` }) %>
+        </div>
+        <% }) %>
+</div>

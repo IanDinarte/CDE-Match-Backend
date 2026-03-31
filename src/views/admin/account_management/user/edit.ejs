@@ -1,0 +1,8 @@
+<div class="form-container">
+    <h2>Edit Customer</h2>
+    <form action="/admin/manage-accounts/customer/<%= user.id %>?_method=PUT" method="POST">
+        <%- include('_form_fields') %>
+            <a href="/admin/manage-accounts/customer/<%= user.id %>">Cancel</a>
+            <button class="btn btn-primary" type="submit">Update</button>
+    </form>
+</div>

@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="form-container">
+        <h2>
+            <%= admin.name %>
+        </h2>
+        <h2>
+            <%= admin.email %>
+        </h2>
+        <h2>
+            <%= admin.state %>
+        </h2>
+
+        <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Edit</a>
+        <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}` }) %>
+    </div>
+</div>
