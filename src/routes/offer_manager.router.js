@@ -3,9 +3,9 @@ import { offerController } from "../controllers/offer.controller.js";
 
 const router = Router();
 
-router.route("/create").post(offerController.createOffer);
+router.route("/").get(offerController.listOffers);
 
-router.route("/offers").get(offerController.listOffers);
+router.route("/new").post(offerController.createOffer);
 
 router.route("/update/:id").patch(offerController.updateOffer);
 

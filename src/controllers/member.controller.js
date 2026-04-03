@@ -2,9 +2,16 @@ import { User } from "../models/user.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
-userController = {};
+const memberController = {};
 
-userController.register = async (req, res) => {
+memberController.listMembers = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+memberController.newMember = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -33,7 +40,7 @@ userController.register = async (req, res) => {
   }
 };
 
-userController.login = async (req, res) => {
+memberController.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -58,7 +65,7 @@ userController.login = async (req, res) => {
   }
 };
 
-userController.logout = async (req, res) => {
+memberController.logout = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -74,7 +81,7 @@ userController.logout = async (req, res) => {
   }
 };
 
-userController.profile = async (req, res) => {
+memberController.profile = async (req, res) => {
   try {
     const user = await User.findById(req.params.id, {
       password: 0,
@@ -92,7 +99,7 @@ userController.profile = async (req, res) => {
   }
 };
 
-userController.editProfile = async (req, res) => {
+memberController.editProfile = async (req, res) => {
   try {
     if (Object.keys(req.body).length === 0) {
       return res.status(400);
@@ -112,7 +119,7 @@ userController.editProfile = async (req, res) => {
   }
 };
 
-userController.deleteProfile = async (req, res) => {
+memberController.deleteProfile = async (req, res) => {
   try {
     const id = req.body;
 
@@ -124,4 +131,4 @@ userController.deleteProfile = async (req, res) => {
   }
 };
 
-export { userController };
+export { memberController };

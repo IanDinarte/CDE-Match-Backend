@@ -45,6 +45,7 @@ img {
 
 img.main {
   border: none;
+  padding: 10px;
   border-radius: 0rem;
 }
 

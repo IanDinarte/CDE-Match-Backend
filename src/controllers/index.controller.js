@@ -1,6 +1,6 @@
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
-indexController = {};
+const indexController = {};
 
 indexController.registerPage = async (req, res) => {
   try {

@@ -2,7 +2,7 @@ import { Offer } from "../models/offer.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
-offerController = {};
+const offerController = {};
 
 offerController.createOffer = async (req, res) => {
   try {
