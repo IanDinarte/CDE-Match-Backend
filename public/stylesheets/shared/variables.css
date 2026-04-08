@@ -3,10 +3,13 @@
     --color-border: rgb(150, 120, 65);
     --color-background-light: rgb(191, 153, 85);
     --color-main-font: rgb(0, 0, 0);
-
+    
+    --color-black: rgb(0, 0, 0);
     --color-darkblue: rgb(16, 29, 41);
     --color-softwhite: rgb(238, 238, 238);
     --color-smokedblue: rgb(24, 39, 53);
     --color-golden: rgb(191, 153, 85);
     --color-darkgolden: rgb(150, 120, 65);
+    --color-gray: rgb(200, 200, 200);
+    --color-darkgray: rgb(100, 100, 100);
 }

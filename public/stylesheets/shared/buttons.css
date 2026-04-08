@@ -1,24 +1,30 @@
 :root {
-  --color-btn-primary-background: rgb(63, 207, 255);
-  --color-btn-primary-background-dark: rgb(0, 191, 255);
-  --color-btn-primary-text: white;
-  --color-btn-primary-text-dark: navy;
+  --color-btn-primary-background: var(--color-darkgolden);
+  --color-btn-primary-background-dark: var(--color-golden);
+  --color-btn-primary-text: var(--color-darkblue);
+  --color-btn-primary-text-dark: var(--color-darkblue);
   --color-btn-border: rgb(255, 255, 255);
-  --color-btn-danger-background: rgb(255, 56, 91);
-  --color-btn-danger-background-dark: rgb(255, 106, 136);
+  --color-btn-danger-background: rgb(132, 0, 24);
+  --color-btn-danger-background-dark: rgb(99, 0, 20);
   --color-btn-danger-text: white;
   --color-btn-danger-text-dark: whitesmoke;
+  --color-btn-cancel-background: rgb(166, 166, 166);
+  --color-btn-cancel-background-dark: rgb(133, 133, 133);
+  --color-btn-cancel-text: black;
+  --color-btn-cancel-text-hover: black;
 }
 
 .btn {
-  border: 2px solid rgb(255, 234, 215);
-  border-radius: .5rem;
-  padding: .1rem .3rem;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.5rem;
   font-size: 1rem;
-  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  /* font-family: "Comic Sans MS", "Comic Sans", cursive; */
   cursor: pointer;
   text-decoration: none;
   text-align: center;
+  font-weight: 100;
+  flex-shrink: 0;
 }
 
 /* .btn-row {
@@ -37,11 +43,12 @@
 .btn-primary {
   color: var(--color-btn-primary-text);
   background-color: var(--color-btn-primary-background);
+  /* height: 40px; */
 }
 
 .btn-primary:hover {
-  color: var(--color-btn-primary-text-dark);
-  background-color: var(--color-btn-primary-background-dark) ;
+  /* color: var(--color-btn-primary-text-dark); */
+  background-color: var(--color-btn-primary-background-dark);
 }
 
 .btn-danger {
@@ -52,4 +59,14 @@
 .btn-danger:hover {
   color: var(--color-btn-danger-text-dark);
   background-color: var(--color-btn-danger-background-dark);
+}
+
+.btn-cancel {
+  color: var(--color-btn-cancel-text);
+  background-color: var(--color-btn-cancel-background);
+}
+
+.btn-cancel:hover {
+  color: var(--color-btn-cancel-text-dark);
+  background-color: var(--color-btn-cancel-background-dark);
 }

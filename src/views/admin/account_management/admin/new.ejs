@@ -1,8 +1,10 @@
 <div class="form-container">
-    <h2>New Admin</h2>
+    <h2>Novo Administrador</h2>
     <form action="/admin/manage-accounts/admin" method="POST">
         <%- include('_form_fields') %>
-        <a href="/admin/manage-accounts/admin">Cancel</a>
-        <button class="btn btn-primary" type="submit">Create</button>
+        <div class="form-options">
+            <button class="btn btn-primary" type="submit">Criar</button>
+            <a class="btn btn-cancel" href="/admin/manage-accounts/admin">Cancelar</a>
+        </div>
     </form>
 </div>

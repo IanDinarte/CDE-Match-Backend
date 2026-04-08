@@ -2,10 +2,27 @@
 @import "shared/buttons.css";
 @import "shared/variables.css";
 @import "shared/form.css";
+@import "shared/fonts.css";
 
 :root {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: var(--color-main-font);
+}
+
+.container a {
+  color: var(--color-darkblue);
+  padding: 0.3rem 0.5rem;
+  background-color: var(--color-darkgolden);
+  border-radius: 0.25rem;
+  margin: 2.5px;
+  text-decoration: none;
+  font-size: var(--font-button-size);
+}
+
+.container a:hover {
+  background-color: var(--color-golden);
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.25rem;
 }
 
 body {
@@ -25,22 +42,45 @@ body {
 
 .container {
   height: 15%;
-  width: 15%;
-  background-color: var(--color-background);
-  border: 5px solid var(--color-border);
+  width: min-content;
+  background-color: var(--color-gray);
+  border: none;
   border-radius: 0.5rem;
   margin: 0.5rem;
   display: flex;
   align-items: center;
   flex-direction: column;
   overflow: hidden;
-  color: var(--color-main-font);
-  padding: 5px;
+  color: var(--color-black);
+  padding: 10px;
+  font-size: var(--font-container-size);
+}
+
+.container-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  width: auto;
+}
+
+.container-actions form {
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 img {
-  border: 5px solid var(--color-border);
-  border-radius: 0.5rem;
+  border: 5px solid var(--color-gray);
+  border-radius: 10rem;
+}
+
+img.select {
+  margin-right: 50px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 img.main {
@@ -53,7 +93,7 @@ img.main {
   margin: 0 2rem;
 } */
 
-.title{
+.title {
   display: flex;
   justify-content: center;
 }

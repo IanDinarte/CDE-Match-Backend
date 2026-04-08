@@ -5,16 +5,14 @@ const router = Router();
 
 router.route("/").get(memberController.listMembers);
 
-router.route("/new").post(memberController.newMember);
+router.route("/new").get(memberController.newMemberPage);
+router.route("/").post(memberController.newMember);
 
-router.route("/login").post(memberController.login);
+router.route("/:id").get(memberController.memberProfile);
 
-router.route("/logout").post(memberController.logout);
+router.route("/:id/edit").get(memberController.editMemberPage);
+router.route("/:id").patch(memberController.editMember);
 
-router.route("/profile/:id").get(memberController.profile);
-
-router.route("/edit/:id").patch(memberController.editProfile);
-
-router.route("/delete/:id").get(memberController.deleteProfile);
+router.route("/:id").delete(memberController.deleteMember);
 
 export default router;

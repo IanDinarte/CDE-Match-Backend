@@ -1,132 +1,113 @@
-import { User } from "../models/user.model.js";
+import { Member } from "../models/member.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
 const memberController = {};
 
 memberController.listMembers = async (req, res) => {
+  let searchOptions = {};
+  if (req.query.name != null && req.query.name !== "") {
+    searchOptions.name = new RegExp(req.query.name, "i");
+  }
   try {
+    const member = await Member.find(searchOptions);
+
+    res.render("admin/account_management/member/index", {
+      member: member,
+      searchOptions: req.query,
+    });
   } catch (error) {
+    console.log(error.message);
+    res.redirect("/");
+  }
+};
+
+memberController.newMemberPage = async (req, res) => {
+  try {
+    res.render("admin/account_management/member/new", { member: new Member() });
+  } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
 memberController.newMember = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Todos as areas devem ser preenchidas." });
-    }
-
-    const existing = await User.findOne({ email: email.toLowerCase() });
-
-    if (existing) {
-      return res
-        .status(400)
-        .json({ message: "Utilizador já está registado no sistema." });
-    }
-
-    const user = await User.create({
-      email: email.toLowerCase,
-      password: password,
+    const member = new Member({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
     });
 
-    res.status(201).json({ message: "Utilizador registado com sucesso." });
+    const newMember = await member.save();
+
+    res.redirect(`/admin/manage-accounts/member/${newMember._id}`);
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
-memberController.login = async (req, res) => {
+memberController.memberProfile = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email: email.toLowerCase() });
-
-    const isMatch = await user.comparePassword(password);
-
-    // if (!user) {
-    //   return res.status(400).json({ message: "Email incorreto." });
-    // }
-
-    if (!isMatch || !user) {
-      return res.status(400).json({ message: "Email ou Senha incorretos." });
-    }
-
-    res.status(200).json({
-      message: "Login Succesful",
-      user: { id: user._id, email: user.email, name: user.name },
-    });
-  } catch (error) {
-    res.satus(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-  }
-};
-
-memberController.logout = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(400).json({ message: "Utilizador não encontrado." });
-    }
-
-    res.status(200).json({ message: "Logout feito com sucesso" });
-  } catch (error) {
-    res.satus(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-  }
-};
-
-memberController.profile = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id, {
+    const member = await Member.findById(req.params.id, {
       password: 0,
-      phone: 0,
-      email: 0,
     });
 
-    if (!user) {
+    if (!member) {
       return res.status(400).json({ message: "Utilizador não encontrado." });
     }
 
-    res.status(200).json({ message: "Utilizador encontrado com sucesso" });
+    res.render("admin/account_management/member/show", { member: member });
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
-memberController.editProfile = async (req, res) => {
+memberController.editMemberPage = async (req,res) => {
   try {
-    if (Object.keys(req.body).length === 0) {
-      return res.status(400);
+      const member = await Member.findById(req.params.id);
+      res.render("admin/account_management/member/edit", { member: member });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
     }
+}
 
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-
-    if (!user) {
-      return res.status(400).json({
-        message: "Utilizador não encontrado.",
-      });
+memberController.editMember = async (req, res) => {
+    try {
+      const member = await Member.findById(req.params.id);
+  
+      member.name = req.body.name;
+      member.email = req.body.email;
+  
+      await member.save();
+      res.redirect(`/admin/manage-accounts/member/${member.id}`);
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: INTERNAL_ERROR_MSG });
-  }
 };
 
-memberController.deleteProfile = async (req, res) => {
+memberController.deleteMember = async (req, res) => {
   try {
-    const id = req.body;
-
-    User.findByIdAndDelete(id).exec();
+    await Member.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/manage_accounts/member/");
 
     res.status(200).json({ message: "Perfil excluído com sucesso" });
   } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+memberController.deactivateMember = async (req, res) => {
+  const member = await Member.findById(req.params.id);
+  try {
+    member.active = false;
+    res.redirect("/admin/manage-accounts/member/");
+  } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };

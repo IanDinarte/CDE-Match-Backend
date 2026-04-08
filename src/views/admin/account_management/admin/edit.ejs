@@ -1,8 +1,10 @@
 <div class="form-container">
-    <h2>Edit Admin</h2>
-    <form action="/admin/manage-accounts/admin/<%= admin.id %>?_method=PUT" method="POST">
+    <h2>Editar Administrador</h2>
+    <form action="/admin/manage-accounts/admin/<%= admin.id %>?_method=PATCH" method="POST">
         <%- include('_form_fields') %>
-        <a href="/admin/manage-accounts/admin/<%= admin.id %>">Cancel</a>
-        <button class="btn btn-primary" type="submit">Update</button>
+        <div class="form-options">
+            <button class="btn btn-primary" type="submit">Atualizar</button>
+            <a class="btn btn-cancel" href="/admin/manage-accounts/admin/<%= admin.id %>">Cancelar</a>
+        </div>
     </form>
 </div>

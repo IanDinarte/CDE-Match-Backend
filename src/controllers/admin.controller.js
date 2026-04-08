@@ -5,91 +5,103 @@ const INTERNAL_ERROR_MSG = "Internal Server Error";
 const adminController = {};
 
 adminController.listAdmins = async (req, res) => {
+  let searchOptions = {};
+  if (req.query.name != null && req.query.name !== "") {
+    searchOptions.name = new RegExp(req.query.name, "i");
+  }
   try {
+    const admin = await Admin.find(searchOptions);
+
+    res.render("admin/account_management/admin/index", {
+      admin: admin,
+      searchOptions: req.query,
+    });
   } catch (error) {
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(error.message);
+    res.redirect("/");
   }
 };
 
 adminController.newAdminPage = async (req, res) => {
   try {
     res.render("admin/account_management/admin/new", { admin: new Admin() });
-  } catch (error) {}
-};
-
-adminController.newAdmin = async (req, res) => {
-  // const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  
-  const admin = new Admin({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  });
-  try {
-    // const { email, password } = req.body;
-
-    // if (!email || !password) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Todos as areas devem ser preenchidas." });
-    // }
-
-    // const existing = await Admin.findOne({ email: email.toLowerCase() });
-
-    // if (existing) {
-    //   return res.status(400).json({
-    //     message: "Já existe um administrador registado com esse email.",
-    //   });
-    // }
-
-    // const admin = await Admin.create({
-    //   email: email.toLowerCase,
-    //   password: password,
-    // });
-
-    const newAdmin = await admin.save();
-    res.redirect(`admin/${newAdmin.id}`);
   } catch (error) {
-    res.render("admin/account_management/admin/new", {
-      admin: admin,
-      errorMessage: "Error creating admin",
-    });
-  }
-};
-
-// adminController.loginAdmin = async (req, res) => {
-//   try {
-//   } catch (error) {
-//     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-//   }
-// };
-
-// adminController.logoutAdmin = async (req, res) => {
-//   try {
-//   } catch (error) {
-//     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-//   }
-// };
-
-adminController.adminProfile = async (req, res) => {
-  try {
-  } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
-adminController.editAdminPage = async (req, res) => {};
+adminController.newAdmin = async (req, res) => {
+  try {
+    const admin = new Admin({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+    });
+
+    const newAdmin = await admin.save();
+
+    res.redirect(`/admin/manage-accounts/admin/${newAdmin._id}`);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+adminController.adminProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.params.id);
+    res.render("admin/account_management/admin/show", { admin: admin });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+adminController.editAdminPage = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.params.id);
+    res.render("admin/account_management/admin/edit", { admin: admin });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
 
 adminController.editAdmin = async (req, res) => {
   try {
+    const admin = await Admin.findById(req.params.id);
+
+    admin.name = req.body.name;
+    admin.email = req.body.email;
+
+    await admin.save();
+    res.redirect(`/admin/manage-accounts/admin/${admin.id}`);
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
 adminController.deleteAdmin = async (req, res) => {
   try {
+    await Admin.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/manage-accounts/admin/");
+
+    res.status(200).json({ message: "Perfil excluído com sucesso" });
   } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+adminController.deactivateAdmin = async (req, res) => {
+  const admin = await Admin.findById(req.params.id);
+  try {
+    admin.active = false;
+    res.redirect("/admin/manage-accounts/admin/");
+  } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };

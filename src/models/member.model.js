@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
-const UserSchema = new Schema({
+const MemberSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -45,7 +45,7 @@ const UserSchema = new Schema({
   },
 });
 
-UserSchema.pre("save", async function (next) {
+MemberSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
@@ -54,8 +54,8 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.methods.comparePassword = async function (password) {
+MemberSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-export const User = mongoose.model("User", UserSchema);
+export const Member = mongoose.model("Member", MemberSchema);

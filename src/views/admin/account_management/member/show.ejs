@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="form-container">
+        <h2>
+            <%= member.name %>
+        </h2>
+        <ul>
+            <li>Email: <%= member.email %>
+            </li>
+            <li>Contact: <%= member.contact %>
+            </li>
+            <li>Address: <%= member.address %>
+            </li>
+            </li>
+            <li>State: <%= member.state %>
+            </li>
+        </ul>
+        <a href="/admin/manage-accounts/member/<%= member.id %>/edit">Edit</a>
+        <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/member/${member.id}` }) %>
+    </div>
+</div>

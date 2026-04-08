@@ -1,0 +1,56 @@
+<!-- partial file! -->
+<div class="form-row">
+    <div class="form-item">
+        <label>Nome*</label>
+        <input class="form-input" type="text" name="name" value="<%= member.name %>">
+    </div>
+
+    <div class="form-item">
+        <label>Email*</label>
+        <input class="form-input" type="email" name="email" value="<%= member.email %>">
+    </div>
+
+    <div class="form-item">
+        <label>Telemovel*</label>
+        <input class="form-input" type="phone" name="phone" value="<%= member.phone %>">
+    </div>
+
+    <% if (member.isNew) { %>
+        <div class="form-item">
+            <label>Palavra Passe*</label>
+            <input class="form-input" type="password" name="password" value="<%= member.password %>">
+        </div>
+    <% } %>
+
+    <div class="form-item">
+        <label>Data de Nascimento*</label>
+        <input class="form-input" type="date" name="dateOfBirth" value="<%= member.dateOfBirth %>">
+    </div class="form-item">
+
+    <div class="form-item">
+        <label>Cidade*</label>
+        <input class="form-input" type="text" name="city" value="<%= member.city %>">
+    </div>
+
+    <div class="form-item">
+        <label>Descrição</label>
+        <input class="form-input" type="text" name="description" value="<%= member.description %>">
+    </div>
+
+    <% if (!member.isNew) { %>
+        <div class="form-item">
+            <label>State</label>
+            <select name="state">
+                <option label="Active" value="Active"></option>
+                <option label="Inactive" value="Inactive"></option>
+            </select>
+        </div>
+    <% } %>
+</div>
+<div class="form-row image-selection">
+    <div class="form-item">
+        <label>Imagem de Perfil</label>
+        <img class="select" height="200" width="200" src="/assets/default.png">
+        <input type="file" name="profilePicture" accept="image/*" value="<%= member.profilePicture %>">
+    </div>
+</div>

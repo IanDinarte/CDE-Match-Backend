@@ -1,8 +1,8 @@
-<div class="form-container">
-    <form action="/admin" method="GET">
-        <label>Search Admin</label>
+<div class="search-form-container">
+    <form action="admin" method="GET">
+        <label>Procurar Administrador</label>
         <div class="search-form">
-            <input type="text" name="name" placeholder="Admin Name" value="<%= searchOptions.name %>">
+            <input class="search-bar" type="text" name="name" placeholder="Admin Name" value="<%= searchOptions.name %>">
             <button class="btn btn-primary" type="submit">Search</button>
         </div>
     </form>
@@ -12,17 +12,19 @@
     <% admin.forEach(admin=> { %>
         <div class="container">
             <div>
-                <%= admin.name %>
+                Nome: <%= admin.name %>
             </div>
             <div>
-                <%= admin.email %>
+                Email: <%= admin.email %>
             </div>
             <div>
-                <%= admin.state %>
+                Estado da Conta: <%= admin.state? "Ativo" : "Inativo" %>
             </div>
-            <a href="/admin/manage-accounts/admin/<%= admin.id %>">View</a>
-            <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Edit</a>
-            <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}` }) %>
+            <div class="container-actions">
+                <a href="/admin/manage-accounts/admin/<%= admin.id %>">View</a>
+                <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Edit</a>
+                <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}` }) %>
+            </div>
         </div>
         <% }) %>
 </div>
