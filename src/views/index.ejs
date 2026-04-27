@@ -1,3 +1,6 @@
-<div>
-    <h1>Homepage viu</h1>
+<div class="main-page-container">
+    <h1>Bem vindo ao Backend do CDE Match</h1>
+    <% if (!user) { %>
+        <a class="btn btn-primary" href="/auth/login">Iniciar Sessão</a>
+    <% } %>
 </div>

@@ -7,33 +7,38 @@
             </a>
         </div>
 
-        <div class="header-option">
-            <a href="/admin/manage-accounts/admin">Administradores</a>
-            <div class="dropdown">
-                <a href="/admin/manage-accounts/admin">Lista de Administradores</a>
-                <a href="/admin/manage-accounts/admin/new">Novo Administrador</a>
+        <% if (user) { %>
+            <div class="header-option">
+                <a href="/admin/manage-accounts/admin">Administradores</a>
+                <div class="dropdown">
+                    <a href="/admin/manage-accounts/admin">Lista de Administradores</a>
+                    <a href="/admin/manage-accounts/admin/new">Novo Administrador</a>
+                </div>
             </div>
-        </div>
 
-        <div class="header-option">
-            <a href="/admin/manage-accounts/member">Membros</a>
-            <div class="dropdown">
-                <a href="/admin/manage-accounts/member">Lista de Membros</a>
-                <a href="/admin/manage-accounts/member/new">Novo Membro</a>
+            <div class="header-option">
+                <a href="/admin/manage-accounts/member">Membros</a>
+                <div class="dropdown">
+                    <a href="/admin/manage-accounts/member">Lista de Membros</a>
+                    <a href="/admin/manage-accounts/member/new">Novo Membro</a>
+                </div>
             </div>
-        </div>
 
-        <div class="header-option">
-            <a href="/admin/manage-offers/">Ofertas</a>
-            <div class="dropdown">
-                <a href="/admin/manage-offers/">Lista de Ofertas</a>
-                <a href="/admin/manage-offers/new">Nova Oferta</a>
+            <div class="header-option">
+                <a href="/admin/manage-offers/">Negócios</a>
+                <div class="dropdown">
+                    <a href="/admin/manage-offers/">Lista de Negócios</a>
+                    <a href="/admin/manage-offers/new">Novo Negócio</a>
+                </div>
             </div>
-        </div>
-        
-        <div class="header-option">
-            <a href="">Login</a>
-        </div>
-        
+
+            <div class="header-option">
+                <a href="">Conta</a>
+            </div>
+
+            <div class="header-option">
+                <a href="/auth/logout">Sair</a>
+            </div>
+        <% } %>
     </nav>
 </header>

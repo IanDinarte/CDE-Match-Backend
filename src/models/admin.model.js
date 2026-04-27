@@ -1,6 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
+/**
+ * state: estado da conta (ativo ou inativo)
+ */
 const AdminSchema = new Schema({
   name: {
     type: String,
@@ -14,11 +17,11 @@ const AdminSchema = new Schema({
     type: String,
     required: true,
   },
-  active: {
-    type: Boolean,
-    default: true,
-    required: false
-  }
+  state: {
+    type: String,
+    enum: ['Ativo', 'Inativo'],
+    default: 'Ativo',
+  },
 });
 
 AdminSchema.pre("save", async function (next) {

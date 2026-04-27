@@ -51,6 +51,14 @@
   background-color: var(--color-btn-primary-background-dark);
 }
 
+.circle {
+  border-radius: 1rem;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+}
+
 .btn-danger {
   color: var(--color-btn-danger-text);
   background-color: var(--color-btn-danger-background);

@@ -1,20 +1,19 @@
 <div class="form-container">
-    <h2>Login</h2>
-    <% if(messages.error) { %>
-        <%= messages.error; %>    
-    <% } %>
-    <form action="/login" method="POST">
-        <div class="form-row">
+    <h2>Iniciar Sessão</h2>
+    <form action="/auth/login" method="POST">
+        <div class="form-column">
             <div class="form-item">
                 <label>Email:</label>
-                <input type="email" name="email" placeholder="email@email.com" required>
+                <input class="form-input" type="email" name="email" placeholder="email@email.com" required>
             </div>
             <div class="form-item">
-                <label>Password:</label>
-                <input type="password" name="password" placeholder="Password" required>
+                <label>Senha:</label>
+                <input class="form-input" type="password" name="password" placeholder="Password" required>
             </div>
         </div>
-        <button class="btn btn-primary" type="submit">Login</button>
+        <div class="form-options">
+            <button class="btn btn-primary" type="submit">Entrar</button>
+            <!-- <a class="btn btn-primary" href="/login/register">Criar Conta</a> -->
+        </div>
     </form>
-    <a href="/login/register">Register</a>
 </div>

@@ -3,7 +3,7 @@
         <label>Procurar Administrador</label>
         <div class="search-form">
             <input class="search-bar" type="text" name="name" placeholder="Admin Name" value="<%= searchOptions.name %>">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <button class="btn btn-primary" type="submit">Procurar</button>
         </div>
     </form>
 </div>
@@ -18,12 +18,11 @@
                 Email: <%= admin.email %>
             </div>
             <div>
-                Estado da Conta: <%= admin.state? "Ativo" : "Inativo" %>
+                Estado da Conta: <%= admin.state %>
             </div>
             <div class="container-actions">
-                <a href="/admin/manage-accounts/admin/<%= admin.id %>">View</a>
-                <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Edit</a>
-                <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}` }) %>
+                <a href="/admin/manage-accounts/admin/<%= admin.id %>">Perfil</a>
+                <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Editar</a>
             </div>
         </div>
         <% }) %>

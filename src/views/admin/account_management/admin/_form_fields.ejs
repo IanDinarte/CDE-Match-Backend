@@ -1,5 +1,5 @@
 <!-- partial file! -->
-<div class="form-row">
+<div class="form-column">
     <div class="form-item">
         <label>Nome</label>
         <input class="form-input" type="text" name="name" value="<%= admin.name %>" required>
@@ -10,22 +10,23 @@
         <input class="form-input" type="email" name="email" value="<%= admin.email %>" required>
     </div>
 
-<% if (admin.isNew) { %>
+    <% if (admin.isNew) { %>
 
-    <div class="form-item">
-        <label>Palavra Passe</label>
-        <input class="form-input" type="password" name="password" required>
-    </div>
+        <div class="form-item">
+            <label>Palavra Passe</label>
+            <input class="form-input" type="password" name="password" required>
+        </div>
 
-<% } else { %>
+    <% } else { %>
+        <div class="form-item"> 
+            <label>Estado da Conta</label>
+            <div class="radio-group">
+                <input type="radio" name="state" value="Ativo" id="ativo" <%= admin.state === 'Ativo' ? 'checked' : '' %>>
+                <label for="ativo">Ativo</label>
 
-    <div class="form-item"> 
-        <label>Estado da Conta</label>
-        <select name="state">
-            <option label="Active" value="Active"></option>
-            <option label="Inactive" value="Inactive"></option>
-        </select>
-    </div>
-    
+                <input type="radio" name="state" value="Inativo" id="inativo" <%= admin.state === 'Inativo' ? 'checked' : '' %>>
+                <label for="inativo">Inativo</label>
+            </div>
+        </div>
 <% } %>
 </div>

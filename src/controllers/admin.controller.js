@@ -1,4 +1,5 @@
 import { Admin } from "../models/admin.model.js";
+import { sendAdminWelcomeEmail } from "../config/mailer.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
@@ -41,6 +42,8 @@ adminController.newAdmin = async (req, res) => {
 
     const newAdmin = await admin.save();
 
+    //await sendAdminWelcomeEmail(req.body.email, req.body.name, req.body.password)
+
     res.redirect(`/admin/manage-accounts/admin/${newAdmin._id}`);
   } catch (error) {
     console.log(error.message);
@@ -74,6 +77,7 @@ adminController.editAdmin = async (req, res) => {
 
     admin.name = req.body.name;
     admin.email = req.body.email;
+    admin.state = req.body.state;
 
     await admin.save();
     res.redirect(`/admin/manage-accounts/admin/${admin.id}`);
@@ -95,15 +99,15 @@ adminController.deleteAdmin = async (req, res) => {
   }
 };
 
-adminController.deactivateAdmin = async (req, res) => {
-  const admin = await Admin.findById(req.params.id);
-  try {
-    admin.active = false;
-    res.redirect("/admin/manage-accounts/admin/");
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-  }
-};
+// adminController.deactivateAdmin = async (req, res) => {
+//   const admin = await Admin.findById(req.params.id);
+//   try {
+//     admin.active = false;
+//     res.redirect("/admin/manage-accounts/admin/");
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+//   }
+// };
 
 export { adminController };

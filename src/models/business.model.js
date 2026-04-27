@@ -5,7 +5,7 @@ const BusinessSchema = new Schema({
     type: String,
     required: true,
   },
-  userPosition: {
+  role: {
     type: String,
     required: true,
   },

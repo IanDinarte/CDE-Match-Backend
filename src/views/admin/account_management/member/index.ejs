@@ -1,28 +1,29 @@
 <div class="search-form-container">
-    <form action="/member" method="GET">
+    <form action="member" method="GET">
         <label>Procurar Membro</label>
         <div class="search-form">
-            <input class="search-bar" type="text" name="name" placeholder="Member Name" value="<%= searchOptions.name %>">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <input class="search-bar" type="text" name="name" placeholder="Nome do Membro" value="<%= searchOptions.name %>">
+            <button class="btn btn-primary" type="submit">Procurar</button>
         </div>
     </form>
 </div>
 <br>
 <div class="row">
-<% member.forEach(member=> { %>
-    <div class="container">
-        <div>
-            <%= member.name %>
+    <% member.forEach(member=> { %>
+        <div class="container">
+            <div>
+                Nome: <%= member.name %>
+            </div>
+            <div>
+                Email: <%= member.email %>
+            </div>
+            <div>
+                Estado da Conta: <%= member.state %>
+            </div>
+            <div class="container-actions">
+                <a href="/admin/manage-accounts/member/<%= member.id %>">Perfil</a>
+                <a href="/admin/manage-accounts/member/<%= member.id %>/edit">Editar</a>
+            </div>
         </div>
-        <div>
-            <%= member.email %>
-        </div>
-        <div>
-            <%= member.state %>
-        </div>
-        <a href="/admin/manage-accounts/member/<%= member.id %>">View</a>
-        <a href="/admin/manage-accounts/member/<%= member.id %>/edit">Edit</a>
-        <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/member/${member.id}` }) %>
-    </div>
-            <% }) %>
+    <% }) %>
 </div>

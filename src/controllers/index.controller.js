@@ -2,7 +2,7 @@ const INTERNAL_ERROR_MSG = "Internal Server Error";
 
 const indexController = {};
 
-indexController.registerPage = async (req, res) => {
+indexController.homePage = async (req, res) => {
   try {
     res.render("index");
   } catch (error) {

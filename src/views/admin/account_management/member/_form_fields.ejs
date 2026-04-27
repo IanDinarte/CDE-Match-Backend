@@ -1,8 +1,8 @@
 <!-- partial file! -->
-<div class="form-row">
+<div class="form-column">
     <div class="form-item">
         <label>Nome*</label>
-        <input class="form-input" type="text" name="name" value="<%= member.name %>">
+        <input class="form-input" type="text" name="name" maxlength="30" value="<%= member.name %>">
     </div>
 
     <div class="form-item">
@@ -24,7 +24,7 @@
 
     <div class="form-item">
         <label>Data de Nascimento*</label>
-        <input class="form-input" type="date" name="dateOfBirth" value="<%= member.dateOfBirth %>">
+        <input class="form-input" type="date" name="dateOfBirth" value="<%= member.dateOfBirthFormatted %>">
     </div class="form-item">
 
     <div class="form-item">
@@ -34,23 +34,48 @@
 
     <div class="form-item">
         <label>Descrição</label>
-        <input class="form-input" type="text" name="description" value="<%= member.description %>">
+        <textarea class="form-input" name="description" rows="5" maxlength="300" placeholder="Escreva aqui a descrição..."><%= member.description %></textarea>
     </div>
 
     <% if (!member.isNew) { %>
         <div class="form-item">
             <label>State</label>
-            <select name="state">
-                <option label="Active" value="Active"></option>
-                <option label="Inactive" value="Inactive"></option>
-            </select>
+                <div class="radio-group">
+                <input type="radio" name="state" value="Ativo" id="ativo" <%= member.state === 'Ativo' ? 'checked' : '' %>>
+                <label for="ativo">Ativo</label>
+
+                <input type="radio" name="state" value="Inativo" id="inativo" <%= member.state === 'Inativo' ? 'checked' : '' %>>
+                <label for="inativo">Inativo</label>
+            </div>
         </div>
     <% } %>
 </div>
-<div class="form-row image-selection">
-    <div class="form-item">
+<div class="form-column image-selection">
+    <div class="form-item-img">
         <label>Imagem de Perfil</label>
-        <img class="select" height="200" width="200" src="/assets/default.png">
-        <input type="file" name="profilePicture" accept="image/*" value="<%= member.profilePicture %>">
+        <label class="image-upload-wrapper">
+            <img class="icon" height="100" width="100" src="/assets/modify-icon.png">
+            <img class="select" id="imagePreview" height="200" width="200" src="<%= member.profilePicture || '/assets/default.jpg' %>">
+            <input class="img-browse" id="imageInput" type="file" name="profilePicture" accept="image/*" value="<%= member.profilePicture %>">
+        </label>
     </div>
 </div>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0]; 
+
+        if (file) {
+            const tempURL = URL.createObjectURL(file);
+            
+            imagePreview.src = tempURL;
+
+            imagePreview.onload = () => {
+                URL.revokeObjectURL(tempURL);
+            };
+        }
+    });
+</script>

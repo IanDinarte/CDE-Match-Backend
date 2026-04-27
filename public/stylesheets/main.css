@@ -3,10 +3,12 @@
 @import "shared/variables.css";
 @import "shared/form.css";
 @import "shared/fonts.css";
+@import "shared/images.css";
+@import "shared/business.css";
 
 :root {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: var(--color-main-font);
+  color: var(--color-dark);
 }
 
 .container a {
@@ -33,11 +35,25 @@ body {
 .row {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   list-style-type: none;
   padding: 0;
   margin: 0px auto;
+  gap: 10px;
+}
+
+.column {
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .container {
@@ -72,27 +88,6 @@ body {
   align-items: center;
 }
 
-img {
-  border: 5px solid var(--color-gray);
-  border-radius: 10rem;
-}
-
-img.select {
-  margin-right: 50px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-
-img.main {
-  border: none;
-  padding: 10px;
-  border-radius: 0rem;
-}
-
-/* .inner-container {
-  margin: 0 2rem;
-} */
-
 .title {
   display: flex;
   justify-content: center;
@@ -101,4 +96,62 @@ img.main {
 .page-header {
   font-size: 2rem;
   font-weight: 500;
+}
+
+.main-page-container {
+  color: var(--color-gray);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 15px;
+  gap: 15px;
+  padding: 15px;
+  background-color: var(--color-darkblue);
+}
+
+li {
+  white-space: nowrap;
+}
+
+ul {
+  list-style-type: none;
+  flex: 1;
+}
+
+span {
+  color: var(--color-minor-text);
+  font-size: var(--font-minor-text-size);
+}
+
+#memberinfo{
+  padding-left: 50px;
+}
+
+.error-message {
+  position: fixed;
+  top: 75px;
+  left: 10px;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

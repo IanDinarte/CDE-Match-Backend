@@ -1,0 +1,47 @@
+<div class="form-column">
+    <div class="form-item">
+        <label>Nome da Empresa*</label>
+        <input class="form-input" type="text" name="name" value="<%= business.name %>">
+    </div>
+    <div class="form-item">
+        <label>Cargo do Membro*</label>
+        <input class="form-input" type="text" name="role" value="<%= business.role %>">
+    </div>
+    <div class="form-item">
+        <label>Area de Negócio*</label>
+        <input class="form-input" type="text" name="area" value="<%= business.area %>">
+    </div>
+    <div class="form-item">
+        <label>Descrição*</label>
+        <textarea class="form-input" name="description" rows="5" maxlength="300" placeholder="Escreva aqui a descrição..."><%= business.description %></textarea>
+    </div>
+</div>
+<div class="form-column image-selection">
+    <div class="form-item-img">
+        <label>Logo da Empresa</label>
+        <label class="image-upload-wrapper">
+            <img class="icon" height="100" width="100" src="/assets/modify-icon.png">
+            <img class="logo-select" id="imagePreview" height="200" width="200" src="<%= business.logo || '/assets/defaultLogo.png' %>">
+            <input class="img-browse" id="imageInput" type="file" name="logo" accept="image/*" value="<%= business.logo %>">
+        </label>
+    </div>
+</div>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0]; 
+
+        if (file) {
+            const tempURL = URL.createObjectURL(file);
+            
+            imagePreview.src = tempURL;
+
+            imagePreview.onload = () => {
+                URL.revokeObjectURL(tempURL);
+            };
+        }
+    });
+</script>

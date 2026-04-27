@@ -1,10 +1,10 @@
-import { Offer } from "../models/offer.model.js";
+import { Deal } from "../models/deal.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
-const offerController = {};
+const dealController = {};
 
-offerController.createOffer = async (req, res) => {
+dealController.createDeal = async (req, res) => {
   try {
     const { title, description, confidential, ownerId } = req.body;
 
@@ -14,7 +14,7 @@ offerController.createOffer = async (req, res) => {
         .json({ message: "Todos as areas devem ser preenchidas." });
     }
 
-    const newOffer = await Offer.create({
+    const newDeal = await Deal.create({
       title: title,
       description: description,
       confidential: confidential,
@@ -27,21 +27,21 @@ offerController.createOffer = async (req, res) => {
   }
 };
 
-offerController.listOffers = async (req, res) => {
+dealController.listDeals = async (req, res) => {
   try {
-    const offerList = await Offer.find();
+    const dealList = await Deal.find();
 
-    res.status(200).json(offerList);
+    res.status(200).json(dealList);
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
-offerController.offerDetails = async (req, res) => {
+dealController.dealDetails = async (req, res) => {
   try {
-    const offer = await Offer.findById(req.params.id);
+    const deal = await Deal.findById(req.params.id);
 
-    if (!offer) {
+    if (!deal) {
       return res.status(400).json({ message: "Oferta não encontrada." });
     }
   } catch (error) {
@@ -49,17 +49,17 @@ offerController.offerDetails = async (req, res) => {
   }
 };
 
-offerController.updateOffer = async (req, res) => {
+dealController.updateDeal = async (req, res) => {
   try {
     if (Object.keys(req.body).length === 0) {
       return res.status(400);
     }
 
-    const offer = await Offer.findByIdAndUpdate(req.params.id, req.body, {
+    const deal = await Deal.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
 
-    if (!offer) {
+    if (!deal) {
       return res.status(400).json({
         message: "Oferta não encontrada.",
       });
@@ -71,9 +71,9 @@ offerController.updateOffer = async (req, res) => {
   }
 };
 
-offerController.deleteOffer = async (req, res) => {
+dealController.deleteDeal = async (req, res) => {
   try {
-    const deleted = await Offer.findByIdAndDelete(req.params.id);
+    const deleted = await Deal.findByIdAndDelete(req.params.id);
 
     if (!deleted) {
       return res.status(400).json({
@@ -87,4 +87,4 @@ offerController.deleteOffer = async (req, res) => {
   }
 };
 
-export { offerController };
+export { dealController as dealController };

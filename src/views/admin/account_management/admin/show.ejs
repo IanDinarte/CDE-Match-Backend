@@ -1,17 +1,22 @@
-<div class="row">
+<!-- <div class="row"> -->
     <div class="form-container">
-        <h2>
-            Nome: <%= admin.name %>
-        </h2>
-        <h2>
-            Email: <%= admin.email %>
-        </h2>
-        <h2>
-            Estado da Conta: <%= admin.state? "Ativo" : "Inativo" %>
-        </h2>
+        <ul>
+            <h2>Perfil Admin</h2>
+            <li>
+                Nome: <%= admin.name %>
+            </li>
+            <li>
+                Email: <%= admin.email %>
+            </li>
+            <li>
+                Estado da Conta: <%= admin.state %>
+            </li>
+        </ul>
         <div class="form-options">
             <a class="btn btn-primary" href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Edit</a>
-            <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}` }) %>
+            <% if(admin.state == 'Inativo'){ %>
+                <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/admin/${admin.id}`}) %>
+            <% } %>
         </div>
     </div>
-</div>
+<!-- </div> -->
