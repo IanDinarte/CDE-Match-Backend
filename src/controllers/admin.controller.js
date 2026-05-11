@@ -106,7 +106,6 @@ adminController.deleteAdmin = async (req, res) => {
       await adminToDelete.deleteOne();
       res.redirect("/admin/manage-accounts/admin/");
     } else {
-      //pop up
       res.redirect(`/admin/manage-accounts/admin/${adminToDelete._id}`);
     }
   } catch (error) {
@@ -114,16 +113,5 @@ adminController.deleteAdmin = async (req, res) => {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
-
-// adminController.deactivateAdmin = async (req, res) => {
-//   const admin = await Admin.findById(req.params.id);
-//   try {
-//     admin.active = false;
-//     res.redirect("/admin/manage-accounts/admin/");
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-//   }
-// };
 
 export { adminController };

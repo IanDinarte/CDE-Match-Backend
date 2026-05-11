@@ -25,13 +25,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 app.use(cookieParser());
+app.use(authController.setUser);
 
 // routes import
 import indexRouter from "./src/routes/index.router.js";
 import adminRouter from "./src/routes/admin.router.js";
 import authRouter from "./src/routes/auth.router.js";
 
-app.use(authController.setUser);
 // routes
 app.use("/", indexRouter);
 app.use("/auth", authRouter);

@@ -160,7 +160,6 @@ memberController.editMember = async (req, res) => {
 
     res.redirect(`/admin/manage-accounts/member/${updatedMember.id}`);
   } catch (error) {
-    // if (error.name === "ValidationError" || error.code === 11000) {
     const names = Array.isArray(req.body.websiteNames)
       ? req.body.websiteNames
       : [req.body.websiteNames || ""];
@@ -182,11 +181,6 @@ memberController.editMember = async (req, res) => {
       member: memberData,
       errorMessage: error.message,
     });
-    // } else {
-    //   res
-    //     .status(500)
-    //     .json({ message: INTERNAL_ERROR_MSG, error: error.message });
-    // }
   }
 };
 
@@ -306,7 +300,6 @@ memberController.deleteMember = async (req, res) => {
       await memberToDelete.deleteOne();
       res.redirect("/admin/manage-accounts/member");
     } else {
-      //pop up
       res.redirect(`/admin/manage-accounts/member/${memberToDelete._id}`);
     }
   } catch (error) {
@@ -332,16 +325,5 @@ memberController.deleteMember = async (req, res) => {
 
 // popular lista dos interessados:
 // const deal = await Deal.findById(id).populate('interested', 'name profilePicture');
-
-// memberController.deactivateMember = async (req, res) => {
-//   const member = await Member.findById(req.params.id);
-//   try {
-//     member.active = false;
-//     res.redirect("/admin/manage-accounts/member/");
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
-//   }
-// };
 
 export { memberController };
