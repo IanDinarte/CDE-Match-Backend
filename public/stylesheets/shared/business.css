@@ -4,29 +4,29 @@
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  width: 100%; /* Mude de min-content para 100% */
-  max-width: 800px; /* Define um limite razoável para não ocupar a tela toda em monitores ultra-wide */
+  width: 100%; 
+  max-width: 800px; 
   margin: 0 auto;
 }
 
 .business-card {
   color: var(--color-gray);
   background-color: var(--color-smokedblue);
-  width: 100%; /* Mude de 40% para 100% para preencher o list */
-  max-width: 600px; /* Ajuste conforme o gosto visual */
+  width: 100%; 
+  max-width: 600px; 
   border-radius: 1rem;
   padding: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 20px;
-  box-sizing: border-box; /* Garante que o padding não aumente a largura */
+  box-sizing: border-box; 
 }
 
 .business-info {
-  flex: 1; /* Ocupa todo o espaço restante, empurrando os botões para a direita */
-  width: auto; /* Remova o max-content */
-  min-width: 0; /* Truque do Flexbox para permitir que o texto quebre corretamente */
+  flex: 1; 
+  width: auto; 
+  min-width: 0;
 }
 .business-options {
   gap: 5px;

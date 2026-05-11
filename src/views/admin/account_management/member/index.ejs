@@ -9,16 +9,16 @@
 </div>
 <br>
 <div class="row">
-    <% member.forEach(member=> { %>
+    <% member.forEach(member => { %>
         <div class="container">
             <div>
-                Nome: <%= member.name %>
+                <%= member.name %>
             </div>
             <div>
-                Email: <%= member.email %>
+                <%= member.email %>
             </div>
             <div>
-                Estado da Conta: <%= member.state %>
+                <%= member.state %>
             </div>
             <div class="container-actions">
                 <a href="/admin/manage-accounts/member/<%= member.id %>">Perfil</a>

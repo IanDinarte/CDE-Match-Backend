@@ -9,6 +9,7 @@ import { connectDB } from "./src/config/database.js";
 import { authController } from "./src/controllers/auth.controller.js";
 import methodOverride from "method-override";
 import cookieParser from "cookie-parser";
+import seedDefaultAdmin from "./src/config/setupAdmin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,6 +42,7 @@ connectDB()
     app.listen(port, () => {
       console.log(`⚙️  Servidor rodando em http://localhost:${port}`);
     });
+    seedDefaultAdmin();
   })
   .catch((err) => {
     console.error("ERRO na conexão com MongoDB:", err);

@@ -17,15 +17,19 @@
             <input class="form-input" type="password" name="password" required>
         </div>
 
-    <% } else { %>
+    <% } else if(admin.id != user.id) { %>
         <div class="form-item"> 
             <label>Estado da Conta</label>
             <div class="radio-group">
-                <input type="radio" name="state" value="Ativo" id="ativo" <%= admin.state === 'Ativo' ? 'checked' : '' %>>
-                <label for="ativo">Ativo</label>
+                <div class="radio-option">
+                    <input type="radio" name="state" value="Ativo" id="ativo" <%= admin.state === 'Ativo' ? 'checked' : '' %>>
+                    <label for="ativo">Ativo</label>
+                </div>
 
-                <input type="radio" name="state" value="Inativo" id="inativo" <%= admin.state === 'Inativo' ? 'checked' : '' %>>
-                <label for="inativo">Inativo</label>
+                <div class="radio-option">
+                    <input type="radio" name="state" value="Inativo" id="inativo" <%= admin.state === 'Inativo' ? 'checked' : '' %>>
+                    <label for="inativo">Inativo</label>
+                </div>
             </div>
         </div>
 <% } %>

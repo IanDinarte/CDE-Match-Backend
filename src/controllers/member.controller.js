@@ -11,6 +11,7 @@ memberController.listMembers = async (req, res) => {
   if (req.query.name != null && req.query.name !== "") {
     searchOptions.name = new RegExp(req.query.name, "i");
   }
+
   try {
     const member = await Member.find(searchOptions);
 
@@ -37,6 +38,25 @@ memberController.newMember = async (req, res) => {
   try {
     const profileImageUrl = req.file ? req.file.path : "/assets/default.png";
 
+    const names = Array.isArray(req.body.websiteNames)
+      ? req.body.websiteNames
+      : [req.body.websiteNames || ""];
+    const links = Array.isArray(req.body.websiteLinks)
+      ? req.body.websiteLinks
+      : [req.body.websiteLinks || ""];
+
+    const websites = names
+      .map((name, index) => {
+        let link = links[index].trim();
+
+        if (link && !/^https?:\/\//i.test(link)) {
+          link = `https://${link}`;
+        }
+
+        return { name: name.trim(), link: link };
+      })
+      .filter((site) => site.name !== "" || site.link !== "");
+
     const member = new Member({
       name: req.body.name,
       email: req.body.email,
@@ -46,24 +66,40 @@ memberController.newMember = async (req, res) => {
       dateOfBirth: req.body.dateOfBirth,
       phone: req.body.phone,
       profilePicture: profileImageUrl,
+      websites: websites,
     });
 
     const newMember = await member.save();
 
-    // await sendMemberWelcomeEmail(
-    //   req.body.email,
-    //   req.body.name,
-    //   req.body.password,
-    // );
+    await sendMemberWelcomeEmail(
+      req.body.email,
+      req.body.name,
+      req.body.password,
+    );
 
     res.redirect(`/admin/manage-accounts/member/${newMember._id}`);
   } catch (error) {
-    if (error.name === "ValidationError") {
-      console.log(error.message);
+    const names = Array.isArray(req.body.websiteNames)
+      ? req.body.websiteNames
+      : [req.body.websiteNames || ""];
+    const links = Array.isArray(req.body.websiteLinks)
+      ? req.body.websiteLinks
+      : [req.body.websiteLinks || ""];
 
-      return;
-    }
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    const websitesMapped = names.map((name, index) => ({
+      name: name,
+      link: links[index],
+    }));
+
+    const memberData = new Member(req.body);
+    memberData.websites = websitesMapped;
+
+    memberData.isNew = true;
+
+    return res.render("admin/account_management/member/new", {
+      member: memberData,
+      errorMessage: error.message,
+    });
   }
 };
 
@@ -97,9 +133,24 @@ memberController.editMember = async (req, res) => {
   try {
     const updateData = { ...req.body };
 
-    if (req.file) {
-      updateData.profilePicture = req.file.path;
-    }
+    const names = Array.isArray(req.body.websiteNames)
+      ? req.body.websiteNames
+      : [req.body.websiteNames || ""];
+    const links = Array.isArray(req.body.websiteLinks)
+      ? req.body.websiteLinks
+      : [req.body.websiteLinks || ""];
+
+    updateData.websites = names
+      .map((name, index) => {
+        let link = links[index].trim();
+
+        if (link && !/^https?:\/\//i.test(link)) {
+          link = `https://${link}`;
+        }
+
+        return { name: name.trim(), link: link };
+      })
+      .filter((site) => site.name !== "" || site.link !== "");
 
     const updatedMember = await Member.findByIdAndUpdate(
       req.params.id,
@@ -109,8 +160,33 @@ memberController.editMember = async (req, res) => {
 
     res.redirect(`/admin/manage-accounts/member/${updatedMember.id}`);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    // if (error.name === "ValidationError" || error.code === 11000) {
+    const names = Array.isArray(req.body.websiteNames)
+      ? req.body.websiteNames
+      : [req.body.websiteNames || ""];
+    const links = Array.isArray(req.body.websiteLinks)
+      ? req.body.websiteLinks
+      : [req.body.websiteLinks || ""];
+
+    const websitesMapped = names.map((name, index) => ({
+      name: name,
+      link: links[index],
+    }));
+
+    const memberData = new Member(req.body);
+    memberData.websites = websitesMapped;
+
+    memberData.isNew = false;
+
+    return res.render("admin/account_management/member/edit", {
+      member: memberData,
+      errorMessage: error.message,
+    });
+    // } else {
+    //   res
+    //     .status(500)
+    //     .json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    // }
   }
 };
 
@@ -122,9 +198,13 @@ memberController.businessDetails = async (req, res) => {
     res.render("admin/account_management/member/business/show", {
       business: business,
       member: member,
-    })
+    });
   } catch (error) {
-    console.log(error.message);
+    if (error.name === "ValidationError") {
+      console.log(error.message);
+
+      return;
+    }
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
@@ -220,15 +300,38 @@ memberController.deleteBusiness = async (req, res) => {
 
 memberController.deleteMember = async (req, res) => {
   try {
-    await Member.findByIdAndDelete(req.params.id);
-    res.redirect("/admin/manage-accounts/member/");
+    const memberToDelete = await Member.findById(req.params.id);
 
-    res.status(200).json({ message: "Perfil excluído com sucesso" });
+    if (memberToDelete.state == "Inativo") {
+      await memberToDelete.deleteOne();
+      res.redirect("/admin/manage-accounts/member");
+    } else {
+      //pop up
+      res.redirect(`/admin/manage-accounts/member/${memberToDelete._id}`);
+    }
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
+
+// memberController.expressInterest = async (req, res) => {
+//   try {
+//     const { dealId } = req.params;
+//     const memberId = req.body.memberId;
+
+//     await Deal.findByIdAndUpdate(dealId, {
+//       $addToSet: { interested: memberId }
+//     });
+
+//     res.status(200).json({ message: "Interesse registado com sucesso" });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+// popular lista dos interessados:
+// const deal = await Deal.findById(id).populate('interested', 'name profilePicture');
 
 // memberController.deactivateMember = async (req, res) => {
 //   const member = await Member.findById(req.params.id);

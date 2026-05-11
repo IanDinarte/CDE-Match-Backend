@@ -12,10 +12,20 @@ const AdminSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: [true, "Email já registado."],
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      "Por favor, introduza um email válido",
+    ],
   },
   password: {
     type: String,
     required: true,
+    minlength: [6, "A senha deve ter no mínimo 6 caracteres"],
+    match: [
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+      "A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial",
+    ],
   },
   state: {
     type: String,

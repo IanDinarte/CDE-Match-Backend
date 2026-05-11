@@ -44,7 +44,7 @@ form {
   font-weight: 100;
 }
 
-h2.name{
+h2.name {
   width: 100%;
 }
 
@@ -70,10 +70,6 @@ h2.name{
   gap: 15px;
   padding-top: 15px;
   padding-bottom: 5px;
-}
-
-.image-selection {
-  flex: 1;
 }
 
 .form-item {
@@ -168,20 +164,67 @@ textarea {
 select {
   background-color: var(--color-gray);
   border: none;
-  height: 1.5rem;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  height: 1.75rem;
   gap: 10px;
-}
-
-select option {
-  background-color: var(--color-softwhite);
+  padding: 0rem 0.5rem;
 }
 
 select option:hover {
   background-color: var(--color-darkgray);
 }
 
-.img-browse {
-  display: none;
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;              
+    margin-top: 5px;
+    align-items: flex-start
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;   
+    gap: 10px;             
+    cursor: pointer;
+}
+
+.radio-option label {
+    margin: 0;             
+    font-size: 0.9rem;
+    cursor: pointer;       
+    color: var(--color-gray);
+}
+
+.radio-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.checkbox-option {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    gap: 10px;           
+    margin-top: 5px;     
+}
+
+.checkbox-option label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--color-gray);
+}
+
+.checkbox-option input[type="checkbox"] {
+    margin: 0;
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
 }
 
 /* select {

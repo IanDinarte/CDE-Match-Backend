@@ -1,0 +1,22 @@
+.website-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.website-row input[name="websiteNames"] {
+  flex: 1; /* Campo de nome menor */
+}
+
+.website-row input[name="websiteLinks"] {
+  flex: 2; /* Campo de link maior */
+}
+
+a.website {
+  color: var(--color-golden);
+}
+
+a.website:hover {
+  color: var(--color-darkgolden);
+}

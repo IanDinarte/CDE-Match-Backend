@@ -73,3 +73,11 @@ img.main {
 img.char {
   border: none;
 }
+
+.image-selection {
+  flex: 1;
+}
+
+.img-browse {
+  display: none;
+}

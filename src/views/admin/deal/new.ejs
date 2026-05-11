@@ -1,0 +1,12 @@
+<div class="form-container">
+    <h2>Novo Negócio</h2>
+    <form action="/admin/manage-deals/" method="POST">
+        <div class="form-row">
+            <%- include('_form_fields') %>
+        </div>
+        <div class="form-options">
+            <button class="btn btn-primary" type="submit">Criar</button>
+            <a class="btn btn-cancel" href="/admin/manage-deals/">Cancelar</a>
+        </div>
+    </form>
+</div>

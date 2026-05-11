@@ -1,0 +1,27 @@
+<div class="search-form-container">
+    <form action="" method="GET">
+        <label>Procurar Negócio</label>
+        <div class="search-form">
+            <input class="search-bar" type="text" name="title" placeholder="Titulo do Negócio" value="<%= searchOptions.title %>">
+            <input class="search-bar" type="text" name="namer" placeholder="Nome do Dono" value="<%= searchOptions.name %>">
+            <button class="btn btn-primary" type="submit">Procurar</button>
+        </div>
+    </form>
+</div>
+<br>
+<div class="row">
+    <% deals.forEach(deal => { %>
+        <div class="container">
+            <div>
+                <%= deal.title %>
+            </div>
+            <div>
+                <%= deal.state %>
+            </div>
+            <div class="container-actions">
+                <a href="/admin/manage-deals/<%= deal.id %>">Detalhes</a>
+                <a href="/admin/manage-deals/<%= deal.id %>/edit">Editar</a>
+            </div>
+        </div>
+    <% }) %>
+</div>

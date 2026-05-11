@@ -72,8 +72,10 @@ nav {
     top: 100%;
     left: 0;
     background-color: var(--color-darkblue);
+    opacity: 0.97;
+    margin-top: 10px;
     padding: 10px;
-    border-radius: 4px;
+    /* border-radius: 4px; */
 }
 
 .header-option:hover .dropdown {
@@ -83,7 +85,7 @@ nav {
 .header-option .dropdown a {
     color: var(--color-gray);
     display: block;
-    padding: 5px 10px;
+    /* padding: 5px 10px; */
 }
 
 /* .header-option .dropdown a:hover {

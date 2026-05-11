@@ -1,0 +1,56 @@
+<div class="form-container">
+    <div class="form-column">
+        <h2 class="name">
+            <%= deal.title %>
+        </h2>
+        <div class="text-area" style="color: var(--color-minor-text); font-size: var(--font-minor-text-size);">
+            <%= deal.description %>
+        </div>
+        <ul>
+            <li>
+                Tipo do Negócio:
+                <span>
+                    <%= deal.type %>
+                </span>
+            </li>
+            <li>
+                Area do Negócio:
+                <span>
+                    <%= deal.area %>
+                </span>
+            </li>
+            <li>
+                Valor Base:
+                <span>
+                    € <%= deal.price %>
+                </span>
+            </li>
+            <li>
+                Dono do Negócio:
+                <span>
+                    <a href="/admin/manage-accounts/member/<%= deal.owner %>">
+                        <%= (deal.owner && deal.owner.name) ? deal.owner.name : 'Nome não encontrado' %>
+                    </a>
+                </span>
+            </li>
+            <li>
+                Estado do Negócio:
+                <span>
+                    <%= deal.state %>
+                </span>
+            </li>
+            <li>
+                Interesses:
+                <span>
+                    <%= deal.interested.length %>
+                </span>
+            </li>
+        </ul>
+        <div class="form-options">
+            <a class="btn btn-primary" href="/admin/manage-deals/<%= deal.id %>/edit">Editar</a>
+            <% if(deal.state=='Cancelado' ){ %>
+                <%- include('../../partials/deleteForm.ejs', { url: `/admin/manage-deals/${deal.id}`}) %>
+                    <% } %>
+        </div>
+    </div>
+</div>

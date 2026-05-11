@@ -1,0 +1,93 @@
+<div class="form-column">
+    <div class="form-item">
+        <label>Titulo*</label>
+        <input class="form-input" type="text" name="title" maxlength="30" value="<%= deal.title %>">
+    </div>
+
+    <div class="form-item">
+        <label>Descrição*</label>
+        <textarea class="form-input" name="description" rows="5" maxlength="300"
+            placeholder="Escreva aqui a descrição..."><%= deal.description %></textarea>
+    </div>
+
+    <div class="form-item">
+        <label>Tipo do Negócio</label>
+        <div class="radio-group">
+            <div class="radio-option">
+                <input type="radio" name="type" value="Oferta" id="oferta" <%=deal.type==='Oferta' ? 'checked' : '' %>>
+                <label for="oferta">Oferta</label>
+            </div>
+
+            <div class="radio-option">
+                <input type="radio" name="type" value="Procura" id="procura" <%=deal.type==='Procura' ? 'checked' : ''
+                    %>>
+                <label for="procura">Procura</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-item">
+        <label>Area do Negócio</label>
+        <select name="area">
+            <% areas.forEach(area => { %>
+                <option value="<%= area %>" <%= deal.area === area ? 'selected' : '' %>>
+                    <%= area %>
+                </option>
+            <% }); %>
+        </select>
+    </div>
+
+    <div class="form-item">
+        <label>Valor Base</label>
+        <input class="form-input" type="number" step="0.01" name="price" min="0" value="<%= deal.price %>">
+    </div>
+
+    <div class="form-item">
+        <label>Dono do Negócio*</label>
+        <input class="form-input" type="text" id="memberSearch" list="membersList" placeholder="Pesquisar membro..."
+            autocomplete="off"
+            value="<%= (deal.owner && deal.owner.name && deal.owner.email) ? deal.owner.name + ', ' + deal.owner.email : '' %>">
+        <datalist id="membersList">
+            <% members.forEach(member=> { %>
+                <option data-id="<%= member.id %>" value="<%= member.name %>, <%= member.email %>"></option>
+                <% }) %>
+        </datalist>
+
+        <input type="hidden" name="owner" id="ownerId" value="<%= (deal.owner) ? (deal.owner.id || deal.owner) : '' %>">
+    </div>
+
+    <div class="form-item">
+        <div class="checkbox-option">
+            <input type="checkbox" name="confidential" id="confidential" value="true" <%=deal.confidential ? 'checked'
+                : '' %>>
+            <label for="confidential">Confidencial</label>
+        </div>
+    </div>
+
+    <% if (!deal.isNew) { %>
+        <div class="form-item">
+            <label>Estado</label>
+            <select name="state">
+                <option value="Disponivel">Disponivel</option>
+                <option value="Fechado">Fechado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+        <% } %>
+</div>
+
+<script>
+    const searchInput = document.getElementById('memberSearch');
+    const hiddenInput = document.getElementById('ownerId');
+    const dataList = document.getElementById('membersList');
+
+    searchInput.addEventListener('input', function () {
+        const selectedOption = Array.from(dataList.options).find(option => option.value === this.value);
+
+        if (selectedOption) {
+            hiddenInput.value = selectedOption.getAttribute('data-id');
+        } else {
+            hiddenInput.value = "";
+        }
+    });
+</script>

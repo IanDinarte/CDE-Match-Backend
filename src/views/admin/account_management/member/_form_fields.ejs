@@ -1,81 +1,172 @@
-<!-- partial file! -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
 <div class="form-column">
     <div class="form-item">
         <label>Nome*</label>
-        <input class="form-input" type="text" name="name" maxlength="30" value="<%= member.name %>">
+        <input class="form-input" required="true" type="text" name="name" maxlength="30" value="<%= member.name %>">
     </div>
 
     <div class="form-item">
         <label>Email*</label>
-        <input class="form-input" type="email" name="email" value="<%= member.email %>">
+        <input class="form-input" required="true" type="text" name="email" pattern="[a-zA-Z0-9._%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" value="<%= member.email %>">
     </div>
 
     <div class="form-item">
         <label>Telemovel*</label>
-        <input class="form-input" type="phone" name="phone" value="<%= member.phone %>">
+        <input class="form-input" type="tel" required="true" maxlength="11" id="phone-visible" value="<%= member.phone %>">
+        <input type="hidden" name="phone" id="phone-hidden" value="<%= member.phone %>">
     </div>
 
     <% if (member.isNew) { %>
         <div class="form-item">
             <label>Palavra Passe*</label>
-            <input class="form-input" type="password" name="password" value="<%= member.password %>">
+            <input class="form-input" type="password" required="true" name="password" value="<%= member.password %>">
         </div>
-    <% } %>
+        <% } %>
 
-    <div class="form-item">
-        <label>Data de Nascimento*</label>
-        <input class="form-input" type="date" name="dateOfBirth" value="<%= member.dateOfBirthFormatted %>">
-    </div class="form-item">
+            <div class="form-item">
+                <label>Data de Nascimento*</label>
+                <input class="form-input" type="date" required="true" name="dateOfBirth" value="<%= member.dateOfBirthFormatted %>">
+            </div class="form-item">
 
-    <div class="form-item">
-        <label>Cidade*</label>
-        <input class="form-input" type="text" name="city" value="<%= member.city %>">
-    </div>
-
-    <div class="form-item">
-        <label>Descrição</label>
-        <textarea class="form-input" name="description" rows="5" maxlength="300" placeholder="Escreva aqui a descrição..."><%= member.description %></textarea>
-    </div>
-
-    <% if (!member.isNew) { %>
-        <div class="form-item">
-            <label>State</label>
-                <div class="radio-group">
-                <input type="radio" name="state" value="Ativo" id="ativo" <%= member.state === 'Ativo' ? 'checked' : '' %>>
-                <label for="ativo">Ativo</label>
-
-                <input type="radio" name="state" value="Inativo" id="inativo" <%= member.state === 'Inativo' ? 'checked' : '' %>>
-                <label for="inativo">Inativo</label>
+            <div class="form-item">
+                <label>Cidade*</label>
+                <input class="form-input" type="text" required="true" name="city" value="<%= member.city %>">
             </div>
-        </div>
-    <% } %>
+
+            <div class="form-item">
+                <label>Descrição</label>
+                <textarea class="form-input" name="description" rows="5" maxlength="300"
+                    placeholder="Escreva aqui a descrição..."><%= member.description %></textarea>
+            </div>
+
+            <div class="form-item">
+                <label>Plano</label>
+                <select name="membership">
+                    <option value="Convidado">Convidado</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Black">Black</option>
+                </select>
+            </div>
+
+            <% if (!member.isNew) { %>
+                <div class="form-item">
+                    <label>State</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="state" value="Ativo" id="ativo" <%=member.state==='Ativo'
+                                ? 'checked' : '' %>>
+                            <label for="ativo">Ativo</label>
+                        </div>
+
+                        <div class="radio-option">
+                            <input type="radio" name="state" value="Inativo" id="inativo" <%=member.state==='Inativo'
+                                ? 'checked' : '' %>>
+                            <label for="inativo">Inativo</label>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
 </div>
 <div class="form-column image-selection">
     <div class="form-item-img">
         <label>Imagem de Perfil</label>
         <label class="image-upload-wrapper">
             <img class="icon" height="100" width="100" src="/assets/modify-icon.png">
-            <img class="select" id="imagePreview" height="200" width="200" src="<%= member.profilePicture || '/assets/default.jpg' %>">
-            <input class="img-browse" id="imageInput" type="file" name="profilePicture" accept="image/*" value="<%= member.profilePicture %>">
+            <img class="select" id="imagePreview" height="200" width="200"
+                src="<%= member.profilePicture || '/assets/default.jpg' %>">
+            <input class="img-browse" id="imageInput" type="file" name="profilePicture" accept="image/*"
+                value="<%= member.profilePicture %>">
         </label>
+    </div>
+    <div class="form-item">
+        <label>Websites</label>
+        <div id="websites-container">
+            <% if (member.websites && member.websites.length> 0) { %>
+                <% member.websites.forEach(site=> { %>
+                    <div class="website-row">
+                        <input class="form-input" type="text" name="websiteNames" value="<%= site.name %>">
+                        <input class="form-input" type="text" name="websiteLinks" value="<%= site.link %>">
+                        <button type="button" class="btn btn-danger circle">
+                            <img class="char" height="20" src="/assets/trash-can.png">
+                        </button>
+                    </div>
+                    <% }) %>
+                        <% } %>
+        </div>
+        <button type="button" class="btn btn-primary" id="add-website-btn">+ Adicionar Website</button>
     </div>
 </div>
 
 <script>
+    const phoneInput = document.getElementById("phone-visible");
+    const hiddenPhoneInput = document.getElementById("phone-hidden");
+
+    const iti = window.intlTelInput(phoneInput, {
+        initialCountry: "pt", 
+        preferredCountries: ["pt", "br", "es", "gb"], 
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+    });
+
+    phoneInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    phoneInput.addEventListener("countrychange", updateHiddenPhone);
+    phoneInput.addEventListener("keyup", updateHiddenPhone);
+
+    function updateHiddenPhone() {
+        hiddenPhoneInput.value = iti.getNumber();
+    }
+
     const imageInput = document.getElementById('imageInput');
     const imagePreview = document.getElementById('imagePreview');
 
-    imageInput.addEventListener('change', function() {
-        const file = this.files[0]; 
+    imageInput.addEventListener('change', function () {
+        const file = this.files[0];
 
         if (file) {
             const tempURL = URL.createObjectURL(file);
-            
+
             imagePreview.src = tempURL;
 
             imagePreview.onload = () => {
                 URL.revokeObjectURL(tempURL);
             };
+        }
+    });
+
+    const websitesContainer = document.getElementById('websites-container');
+    const addWebsiteBtn = document.getElementById('add-website-btn');
+
+    addWebsiteBtn.addEventListener('click', () => {
+        const totalRows = websitesContainer.querySelectorAll('.website-row').length;
+
+        if (totalRows >= 5) {
+            alert("Podes adicionar no máximo 5 websites.");
+            return;
+        }
+
+        const row = document.createElement('div');
+        row.classList.add('website-row');
+
+        row.innerHTML = `
+        <input class="form-input" type="text" name="websiteNames" placeholder="Nome">
+        <input class="form-input" type="text" name="websiteLinks" placeholder="exemplo.com">
+        <button type="button" class="btn btn-danger circle">
+            <img class="char" height="20" src="/assets/trash-can.png">
+        </button>
+    `;
+
+        websitesContainer.appendChild(row);
+    });
+
+    websitesContainer.addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('.btn-danger');
+        if (deleteBtn) {
+            deleteBtn.parentElement.remove();
         }
     });
 </script>

@@ -42,12 +42,17 @@ adminController.newAdmin = async (req, res) => {
 
     const newAdmin = await admin.save();
 
-    //await sendAdminWelcomeEmail(req.body.email, req.body.name, req.body.password)
+    await sendAdminWelcomeEmail(req.body.email, req.body.name, req.body.password)
 
     res.redirect(`/admin/manage-accounts/admin/${newAdmin._id}`);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    const adminData = new Admin(req.body);
+    adminData.isNew = true;
+
+    return res.render("admin/account_management/admin/new", {
+      admin: adminData,
+      errorMessage: error.message,
+    });
   }
 };
 
@@ -82,17 +87,28 @@ adminController.editAdmin = async (req, res) => {
     await admin.save();
     res.redirect(`/admin/manage-accounts/admin/${admin.id}`);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    const adminData = new Admin(req.body);
+
+    adminData.isNew = false;
+
+    return res.render("admin/account_management/admin/edit", {
+      admin: adminData,
+      errorMessage: error.message,
+    });
   }
 };
 
 adminController.deleteAdmin = async (req, res) => {
   try {
-    await Admin.findByIdAndDelete(req.params.id);
-    res.redirect("/admin/manage-accounts/admin/");
+    const adminToDelete = await Admin.findById(req.params.id);
 
-    res.status(200).json({ message: "Perfil excluído com sucesso" });
+    if (adminToDelete.state == "Inativo" && req.user.id != req.params.id) {
+      await adminToDelete.deleteOne();
+      res.redirect("/admin/manage-accounts/admin/");
+    } else {
+      //pop up
+      res.redirect(`/admin/manage-accounts/admin/${adminToDelete._id}`);
+    }
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });

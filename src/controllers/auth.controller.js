@@ -18,23 +18,28 @@ authController.login = async (req, res) => {
     const { email, password } = req.body;
     const admin = await Admin.findOne({ email });
 
-    if (!admin || !(await admin.comparePassword(password)) || admin.state == 'Inativo') {
+    if (
+      !admin ||
+      !(await admin.comparePassword(password)) ||
+      admin.state == "Inativo"
+    ) {
       return res.render("login", { errorMessage: "Credenciais inválidas" });
     }
 
-    const token = jwt.sign(
-      { id: admin.id, role: "admin" },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
+      const token = jwt.sign(
+        { id: admin.id, role: "admin" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" },
+      );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, //1 dia
-    });
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000, //1 dia
+      });
 
-    res.redirect("/");
+      res.redirect("/");
+    
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }

@@ -9,21 +9,21 @@
 </div>
 <br>
 <div class="row">
-    <% admin.forEach(admin=> { %>
+    <% admin.forEach(admin => { %>
         <div class="container">
             <div>
-                Nome: <%= admin.name %>
+                <%= admin.name %>
             </div>
             <div>
-                Email: <%= admin.email %>
+                <%= admin.email %>
             </div>
             <div>
-                Estado da Conta: <%= admin.state %>
+                <%= admin.state %>
             </div>
             <div class="container-actions">
                 <a href="/admin/manage-accounts/admin/<%= admin.id %>">Perfil</a>
                 <a href="/admin/manage-accounts/admin/<%= admin.id %>/edit">Editar</a>
             </div>
         </div>
-        <% }) %>
+    <% }) %>
 </div>

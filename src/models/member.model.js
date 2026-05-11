@@ -18,11 +18,20 @@ const MemberSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: [true, "Email já registado."],
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      "Por favor, introduza um email válido",
+    ],
   },
   password: {
     type: String,
     required: true,
+    minlength: [6, "A senha deve ter no mínimo 6 caracteres"],
+    match: [
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+      "A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial",
+    ],
   },
   dateOfBirth: {
     type: Date,
@@ -41,7 +50,7 @@ const MemberSchema = new Schema({
   membership: {
     type: String,
     enum: ["Convidado", "Silver", "Gold", "Black"],
-    default: "Convidado"
+    default: "Convidado",
   },
   city: {
     type: String,
@@ -52,13 +61,17 @@ const MemberSchema = new Schema({
   },
   websites: [
     {
-      //websites + socials (instagram, facebook, etc)
-      type: String,
+      name: String,
+      link: String,
     },
   ],
-  business: [
-    Business.schema
+  deals: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Deal",
+    },
   ],
+  business: [Business.schema],
   profilePicture: {
     type: Buffer,
   },

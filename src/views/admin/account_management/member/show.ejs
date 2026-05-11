@@ -47,6 +47,25 @@
                                 <%= member.state %>
                             </span>
                         </li>
+                        <li>
+                            <br>
+                            <a class="btn btn-primary" href="/admin/manage-deals/?namer=<%= member.name %>">Negócios do
+                                Membro</a>
+                        </li>
+                        <% if(member.websites.length > 0){%>
+                        <br>
+                        Websites:
+                        <ul>
+                            <% member.websites.forEach(website=> { %>
+                                <li style="color: var(--color-golden)">
+                                    ● 
+                                    <a class="website" href="<%= website.link %>">
+                                        <%= website.name %>
+                                    </a>
+                                </li>
+                                <% }) %>
+                        </ul>
+                        <% } %>
                     </ul>
                 </div>
                 <div class="form-column">
@@ -57,8 +76,9 @@
             <div class="form-options">
                 <a class="btn btn-primary" href="/admin/manage-accounts/member/<%= member.id %>/edit">Editar</a>
                 <% if(member.state=='Inativo' ){ %>
-                    <%- include('../../../partials/deleteForm.ejs', { url: `/admin/manage-accounts/member/${member.id}`}) %>
-                <% } %>
+                    <%- include('../../../partials/deleteForm.ejs', { url:
+                        `/admin/manage-accounts/member/${member.id}`}) %>
+                        <% } %>
             </div>
         </div>
     </div>
@@ -68,8 +88,8 @@
                 <h2>Empresas do Membro</h2>
                 <% member.business.forEach(business=> { %>
                     <div class="business-card">
-                        <img class="logo" height="100" 
-                        src="<%= business.logo || '/assets/defaultLogo.jpg' %>" alt="Foto de <%= business.name%>">
+                        <img class="logo" height="100" width="100" src="<%= business.logo || '/assets/defaultLogo.jpg' %>"
+                            alt="Foto de <%= business.name%>">
                         <div class="business-info">
                             <ul>
                                 <li>
@@ -99,10 +119,12 @@
                             </ul>
                         </div>
                         <div class="business-options">
-                            <a class="btn btn-primary circle" href="/admin/manage-accounts/member/<%= member.id %>/business/<%= business.id %>">
+                            <a class="btn btn-primary circle"
+                                href="/admin/manage-accounts/member/<%= member.id %>/business/<%= business.id %>">
                                 <img class="char" height="20" src="/assets/eye-icon.png">
                             </a>
-                            <a class="btn btn-primary circle" href="/admin/manage-accounts/member/<%= member.id %>/business/<%= business.id %>/edit">
+                            <a class="btn btn-primary circle"
+                                href="/admin/manage-accounts/member/<%= member.id %>/business/<%= business.id %>/edit">
                                 <img class="char" height="20" src="/assets/edit-icon.png">
                             </a>
                             <form
