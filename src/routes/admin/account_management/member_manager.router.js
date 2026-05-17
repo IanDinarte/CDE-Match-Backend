@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { memberController } from "../../controllers/member.controller.js";
-import { upload } from "../../config/cloudinary.js";
+import { memberController } from "../../../controllers/member.controller.js";
+import { upload } from "../../../config/cloudinary.js";
 
 const router = Router();
 

@@ -29,13 +29,15 @@ app.use(authController.setUser);
 
 // routes import
 import indexRouter from "./src/routes/index.router.js";
-import adminRouter from "./src/routes/admin.router.js";
+import adminRouter from "./src/routes/admin/admin.router.js";
 import authRouter from "./src/routes/auth.router.js";
+import apiRouter from "./src/routes/api/api.router.js";
 
 // routes
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/admin", authController.verifyLogin, adminRouter);
+app.use("/api", apiRouter);
 
 connectDB()
   .then(() => {
