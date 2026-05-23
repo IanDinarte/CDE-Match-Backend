@@ -22,8 +22,22 @@ memberApi.listMembers = async (req, res) => {
 memberApi.memberProfile = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id, {
-      password: 0,
+      password: 0
     });
+
+    if (!member) {
+      return res.status(400).json({ message: "Utilizador não encontrado." });
+    }
+
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+memberApi.me = async (req, res) => {
+  try {
+    const member = await Member.findById(req.user.id, { password: 0 });
 
     if (!member) {
       return res.status(400).json({ message: "Utilizador não encontrado." });

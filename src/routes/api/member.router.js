@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { upload } from "../../config/cloudinary.js";
 import { memberApi } from "../../controllers/api/member.api.js";
+import { authController } from "../../controllers/auth.controller.js";
 
 const router = Router();
 
 router.route("/").get(memberApi.listMembers);
+
+router.route("/me").get(authController.protectApi, memberApi.me);
 
 router.route("/:id").get(memberApi.memberProfile);
 

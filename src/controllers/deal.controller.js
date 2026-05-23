@@ -36,9 +36,13 @@ dealController.listDeals = async (req, res) => {
 
 dealController.newDealPage = async (req, res) => {
   try {
-    const areas = Deal.schema.path('area').enumValues;
+    const areas = Deal.schema.path("area").enumValues;
     const members = await Member.find();
-    res.render("admin/deal/new", { deal: new Deal(), members: members, areas: areas });
+    res.render("admin/deal/new", {
+      deal: new Deal(),
+      members: members,
+      areas: areas,
+    });
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
@@ -75,7 +79,7 @@ dealController.dealDetails = async (req, res) => {
     await deal.populate("owner");
 
     if (!deal) {
-      return res.status(400).json({ message: "Oferta não encontrada." });
+      return res.status(400).json({ message: "Negócio não encontrado." });
     }
 
     res.render("admin/deal/show", { deal: deal });
@@ -86,12 +90,16 @@ dealController.dealDetails = async (req, res) => {
 
 dealController.editDealPage = async (req, res) => {
   try {
-    const areas = Deal.schema.path('area').enumValues;
+    const areas = Deal.schema.path("area").enumValues;
     const deal = await Deal.findById(req.params.id);
     await deal.populate("owner");
     const members = await Member.find();
 
-    res.render("admin/deal/edit", { deal: deal, members: members, areas: areas });
+    res.render("admin/deal/edit", {
+      deal: deal,
+      members: members,
+      areas: areas,
+    });
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
