@@ -11,18 +11,30 @@ const MemberSchema = new Schema({
     required: true,
   },
   phone: {
-    type: String,
-    required: true,
-    unique: true,
+    value: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    confidential: {
+      type: Boolean,
+      default: false,
+    },
   },
   email: {
-    type: String,
-    required: true,
-    unique: [true, "Email já registado."],
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Por favor, introduza um email válido",
-    ],
+    value: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Por favor, introduza um email válido",
+      ],
+    },
+    confidential: {
+      type: Boolean,
+      default: false,
+    },
   },
   password: {
     type: String,
@@ -101,8 +113,13 @@ MemberSchema.virtual("age").get(function () {
   return age;
 });
 
+// MemberSchema.virtual("dateOfBirthFormatted").get(function () {
+//   if (!this.dateOfBirth) return "";
+//   return this.dateOfBirth.toISOString().split("T")[0];
+// });
+
 MemberSchema.virtual("dateOfBirthFormatted").get(function () {
-  if (!this.dateOfBirth) return "";
+  if (!this.dateOfBirth || !(this.dateOfBirth instanceof Date)) return "";
   return this.dateOfBirth.toISOString().split("T")[0];
 });
 

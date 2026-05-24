@@ -82,6 +82,29 @@ h2.name {
   margin-top: 10px;
 }
 
+.form-item-row {
+    display: flex;
+    align-items: center; 
+    gap: 12px;           
+    width: 100%;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;            
+    white-space: nowrap; 
+    cursor: pointer;
+    color: #8A94A6;     
+    font-size: 14px;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
 .form-item-img {
   display: flex;
   flex-direction: column;

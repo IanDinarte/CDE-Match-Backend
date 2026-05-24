@@ -5,12 +5,11 @@ const INTERNAL_ERROR_MSG = "Internal Server Error";
 const authApi = {};
 
 authApi.login = async (req, res) => {
-  console.log("oi");
   try {
     const { email, password } = req.body;
-    const member = await Member.findOne({ email });
+    const member = await Member.findOne({ "email.value": email });
 
-    if (!member || !(await member.comparePassword(password)) || !member.state == "Inativo") {
+    if (!member || !(await member.comparePassword(password)) || member.state === "Inativo") {
       return res.status(400).json({ message: "Credenciais inválidas." });
     }
 

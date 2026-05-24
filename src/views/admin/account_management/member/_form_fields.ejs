@@ -9,13 +9,28 @@
 
     <div class="form-item">
         <label>Email*</label>
-        <input class="form-input" required="true" type="text" name="email" pattern="[a-zA-Z0-9._%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" value="<%= member.email %>">
+        <div class="form-item-row">
+            <input class="form-input" required="true" type="text" name="email"
+                pattern="[a-zA-Z0-9._%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" value="<%= member.email.value %>">
+
+            <label class="checkbox-container">
+                <span>Confidencial</span>
+                <input type="checkbox" name="emailConfidential" <%=member.email.confidential ? 'checked' : '' %> />
+            </label>
+        </div>
     </div>
 
     <div class="form-item">
-        <label>Telemovel*</label>
-        <input class="form-input" type="tel" required="true" maxlength="11" id="phone-visible" value="<%= member.phone %>">
-        <input type="hidden" name="phone" id="phone-hidden" value="<%= member.phone %>">
+        <label>Telemóvel*</label>
+        <div class="form-item-row">
+            <input class="form-input text-input" type="tel" required="true" maxlength="11" id="phone-visible"
+                name="phone" value="<%= member.phone.value %>">
+
+            <label class="checkbox-container">
+                <span>Confidencial</span>
+                <input type="checkbox" name="phoneConfidential" <%=member.phone.confidential ? 'checked' : '' %> />
+            </label>
+        </div>
     </div>
 
     <% if (member.isNew) { %>
@@ -27,7 +42,8 @@
 
             <div class="form-item">
                 <label>Data de Nascimento*</label>
-                <input class="form-input" type="date" required="true" name="dateOfBirth" value="<%= member.dateOfBirthFormatted %>">
+                <input class="form-input" type="date" required="true" name="dateOfBirth"
+                    value="<%= member.dateOfBirthFormatted %>">
             </div class="form-item">
 
             <div class="form-item">
@@ -105,8 +121,8 @@
     const hiddenPhoneInput = document.getElementById("phone-hidden");
 
     const iti = window.intlTelInput(phoneInput, {
-        initialCountry: "pt", 
-        preferredCountries: ["pt", "br", "es", "gb"], 
+        initialCountry: "pt",
+        preferredCountries: ["pt", "br", "es", "gb"],
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
     });
 

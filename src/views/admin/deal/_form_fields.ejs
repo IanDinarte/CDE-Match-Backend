@@ -46,7 +46,7 @@
         <label>Dono do Negócio*</label>
         <input class="form-input" type="text" id="memberSearch" list="membersList" placeholder="Pesquisar membro..."
             autocomplete="off"
-            value="<%= (deal.owner && deal.owner.name && deal.owner.email) ? deal.owner.name + ', ' + deal.owner.email : '' %>">
+            value="<%= (deal.owner && deal.owner.name && deal.owner.email) ? deal.owner.name + ', ' + deal.owner.email.value : '' %>">
         <datalist id="membersList">
             <% members.forEach(member=> { %>
                 <option data-id="<%= member.id %>" value="<%= member.name %>, <%= member.email %>"></option>

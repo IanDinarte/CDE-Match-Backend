@@ -59,12 +59,18 @@ memberController.newMember = async (req, res) => {
 
     const member = new Member({
       name: req.body.name,
-      email: req.body.email,
+      email: {
+        value: req.body.email,
+        confidential: req.body.emailConfidential === "on", // Converte "on" para true, e undefined para false
+      },
+      phone: {
+        value: req.body.phone,
+        confidential: req.body.phoneConfidential === "on", // Converte "on" para true, e undefined para false
+      },
       password: req.body.password,
       description: req.body.description,
       city: req.body.city,
       dateOfBirth: req.body.dateOfBirth,
-      phone: req.body.phone,
       profilePicture: profileImageUrl,
       websites: websites,
     });
@@ -131,7 +137,22 @@ memberController.editMemberPage = async (req, res) => {
 
 memberController.editMember = async (req, res) => {
   try {
-    const updateData = { ...req.body };
+    const updateData = {
+      name: req.body.name,
+      description: req.body.description,
+      city: req.body.city,
+      dateOfBirth: req.body.dateOfBirth,
+    };
+
+    updateData.email = {
+      value: req.body.email,
+      confidential: req.body.emailConfidential === "on",
+    };
+
+    updateData.phone = {
+      value: req.body.phone,
+      confidential: req.body.phoneConfidential === "on",
+    };
 
     const names = Array.isArray(req.body.websiteNames)
       ? req.body.websiteNames

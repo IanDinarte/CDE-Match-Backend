@@ -21,7 +21,7 @@ dealApi.listDeals = async (req, res) => {
       searchOptions.owner = { $in: memberIds };
     }
 
-    const dealList = (await Deal.find(searchOptions)) || [];
+    const dealList = (await Deal.find(searchOptions).populate("owner", "name")) || [];
 
     res.json(dealList);
   } catch (error) {
@@ -33,6 +33,7 @@ dealApi.listDeals = async (req, res) => {
 dealApi.dealDetails = async (req, res) => {
   try {
     const deal = await Deal.findById(req.params.id);
+    await deal.populate("owner");
 
     if (!deal) {
       return res.status(400).json({ message: "Negócio não encontrado." });
