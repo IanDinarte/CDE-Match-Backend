@@ -55,7 +55,7 @@ memberApi.me = async (req, res) => {
       path: "deals",  
       populate: {
         path: "owner",
-        select: "name",
+        select: "name profilePicture",
       },
     });
 

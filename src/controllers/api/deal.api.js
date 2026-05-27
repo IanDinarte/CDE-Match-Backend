@@ -21,7 +21,7 @@ dealApi.listDeals = async (req, res) => {
       searchOptions.owner = { $in: memberIds };
     }
 
-    const dealList = (await Deal.find(searchOptions).populate("owner", "name")) || [];
+    const dealList = (await Deal.find(searchOptions).populate("owner", "name profilePicture")) || [];
 
     res.json(dealList);
   } catch (error) {

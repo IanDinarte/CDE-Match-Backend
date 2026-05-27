@@ -85,7 +85,8 @@ const MemberSchema = new Schema({
   ],
   business: [Business.schema],
   profilePicture: {
-    type: Buffer,
+    // type: Buffer,
+    type: String,
   },
   state: {
     type: String,

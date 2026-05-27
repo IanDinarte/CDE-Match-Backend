@@ -36,7 +36,7 @@ memberController.newMemberPage = async (req, res) => {
 
 memberController.newMember = async (req, res) => {
   try {
-    const profileImageUrl = req.file ? req.file.path : "/assets/default.png";
+    const profileImageUrl = req.file ? req.file.path : null;
 
     const names = Array.isArray(req.body.websiteNames)
       ? req.body.websiteNames
@@ -137,11 +137,14 @@ memberController.editMemberPage = async (req, res) => {
 
 memberController.editMember = async (req, res) => {
   try {
+    const profileImageUrl = req.file ? req.file.path : null;
+
     const updateData = {
       name: req.body.name,
       description: req.body.description,
       city: req.body.city,
       dateOfBirth: req.body.dateOfBirth,
+      profilePicture: profileImageUrl
     };
 
     updateData.email = {
@@ -239,7 +242,7 @@ memberController.newBusinessPage = async (req, res) => {
 
 memberController.newBusiness = async (req, res) => {
   try {
-    const logoUrl = req.file ? req.file.path : "/assets/defaultLogo.png";
+    const logoUrl = req.file ? req.file.path : null;
 
     const member = await Member.findById(req.params.id);
 
@@ -279,7 +282,7 @@ memberController.editBusinessPage = async (req, res) => {
 memberController.editBusiness = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
-    const logo = req.file ? req.file.path : "/assets/defaultLogo.png";
+    const logo = req.file ? req.file.path : null;
 
     const business = member.business.id(req.params.bid);
 
