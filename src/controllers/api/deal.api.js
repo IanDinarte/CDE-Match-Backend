@@ -1,27 +1,51 @@
 import { Deal } from "../../models/deal.model.js";
 import { Member } from "../../models/member.model.js";
+import { Suggestion } from "../../models/suggestion.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 const dealApi = {};
 
 dealApi.listDeals = async (req, res) => {
-  let searchOptions = {};
-  if (req.query.title != null && req.query.title !== "") {
-    searchOptions.title = new RegExp(req.query.title, "i");
-  }
-
   try {
-    if (req.query.namer != null && req.query.namer !== "") {
-      const matchingMembers = await Member.find({
-        name: new RegExp(req.query.namer, "i"),
-      }).select("_id");
+    const { title, type, area, minPrice, maxPrice } = req.query;
+    let queryConditions = [];
 
+    queryConditions.push({ confidential: false });
+    queryConditions.push({ state: "Disponivel" });
+
+    if (title && title.trim() !== "") {
+      const regex = new RegExp(title, "i");
+      const matchingMembers = await Member.find({ name: regex }).select("_id");
       const memberIds = matchingMembers.map((member) => member._id);
 
-      searchOptions.owner = { $in: memberIds };
+      queryConditions.push({
+        $or: [{ title: regex }, { owner: { $in: memberIds } }],
+      });
     }
 
-    const dealList = (await Deal.find(searchOptions).populate("owner", "name profilePicture")) || [];
+    if (type && type !== "" && type !== "Todos") {
+      queryConditions.push({ type: type });
+    }
+
+    if (area && area !== "" && area !== "Todas") {
+      queryConditions.push({ area: area });
+    }
+
+    if (minPrice || maxPrice) {
+      let priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+
+      queryConditions.push({ price: priceQuery });
+    }
+
+    const searchOptions =
+      queryConditions.length > 0 ? { $and: queryConditions } : {};
+
+    const dealList =
+      (await Deal.find(searchOptions)
+        .populate("owner", "name profilePicture")
+        .sort({ createdAt: -1 })) || [];
 
     res.json(dealList);
   } catch (error) {
@@ -40,6 +64,55 @@ dealApi.dealDetails = async (req, res) => {
     }
 
     res.json(deal);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+dealApi.suggestedDeals = async (req, res) => {
+  try {
+    const suggestedDeals = await Suggestion.find({ suggestedTo: req.user.id })
+      .populate({
+        path: "deal",
+        populate: {
+          path: "owner",
+          select: "name profilePicture",
+        },
+      })
+      .populate("suggestedBy", "name")
+      .sort({ createdAt: -1 });
+
+    res.json(suggestedDeals || []);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+/**
+ * UNFINISHED, NAO USAR
+ *
+ * A parte de deletar sugestões é feita para apagar as sugestões que sejam
+ * de deals canceladas ou fechadas, tirando a necessidade de filtra-las.
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+dealApi.updateDeal = async (req, res) => {
+  try {
+    const dealId = req.params.id;
+    const updatedDeal = await Deal.findByIdAndUpdate(
+      dealId,
+      { $set: req.body },
+      { new: true },
+    );
+
+    if (state === "Fechado" || state === "Cancelado") {
+      await Suggestion.deleteMany({ deal: dealId });
+    }
+
+    res.json(updatedDeal);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });

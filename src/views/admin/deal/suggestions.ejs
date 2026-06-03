@@ -1,0 +1,26 @@
+<div class="row">
+    <% suggestions.forEach(suggestion => { %>
+        <div class="container suggestion">
+            <div>
+                Negócio: <a href="/admin/manage-deals/<%= suggestion.deal.id %>">
+                    <%= suggestion.deal.title %>
+                </a>
+            </div>
+            <div>
+                Sugerido por: <%= suggestion.suggestedBy.name || "Administração" %> 
+            </div>
+            <div>
+                Sugerido para: 
+                <a href="/admin/manage-accounts/member/<%=  suggestion.suggestedTo.id %>">
+                    <%= suggestion.suggestedTo.name %>
+                </a>
+            </div>
+            <div>
+                Data: <%= suggestion.createdAt %>
+            </div>
+            <div>
+                Estado: <%= suggestion.state %>
+            </div>
+        </div>
+        <% }) %>
+</div>

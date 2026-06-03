@@ -1,5 +1,6 @@
 import { Deal } from "../models/deal.model.js";
 import { Member } from "../models/member.model.js";
+import { Suggestion } from "../models/suggestion.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
@@ -76,13 +77,15 @@ dealController.newDeal = async (req, res) => {
 dealController.dealDetails = async (req, res) => {
   try {
     const deal = await Deal.findById(req.params.id);
+    const members = await Member.find({ state: "Ativo" }).sort({ name: 1 });
+
     await deal.populate("owner");
 
     if (!deal) {
       return res.status(400).json({ message: "Negócio não encontrado." });
     }
 
-    res.render("admin/deal/show", { deal: deal });
+    res.render("admin/deal/show", { deal: deal, members: members });
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
@@ -121,7 +124,70 @@ dealController.editDeal = async (req, res) => {
       });
     }
 
+    if (deal.state === "Fechado" || deal.state === "Cancelado") {
+      await Suggestion.deleteMany({ deal: deal._id });
+    }
+
     res.redirect(`${deal._id}`);
+  } catch (error) {
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+dealController.listSuggestions = async (req, res) => {
+  try {
+    const suggestions = await Suggestion.find()
+      .populate("deal", "title")
+      .populate("suggestedBy", "name")
+      .populate("suggestedTo", "name")
+      .sort({createdAt: -1});
+
+    res.render("admin/deal/suggestions", {
+      suggestions: suggestions || [],
+    });
+  } catch (error) {
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+dealController.suggestDeal = async (req, res) => {
+  try {
+    const dealId = req.params.id;
+    const { suggestedTo } = req.body;
+
+    const adminId = req.user.id;
+
+    const deal = await Deal.findById(dealId);
+    if (!deal) {
+      return res.status(404).send("Negócio não encontrado.");
+    }
+
+    if (deal.state !== "Disponivel") {
+      return res.status(400).send("Negócio não disponivel.");
+    }
+
+    const existingSuggestion = await Suggestion.findOne({
+      deal: dealId,
+      suggestedTo: suggestedTo,
+    });
+
+    if (existingSuggestion) {
+      return res.send(
+        "<script>alert('Este negócio já foi sugerido a este membro!'); window.history.back();</script>",
+      );
+    }
+
+    const newSuggestion = new Suggestion({
+      deal: dealId,
+      suggestedTo: suggestedTo,
+      suggestedBy: adminId,
+      onModel: "Admin",
+      status: "Enviado",
+    });
+
+    await newSuggestion.save();
+
+    res.redirect(`/admin/manage-deals/${dealId}`);
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }

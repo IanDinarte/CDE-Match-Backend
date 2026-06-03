@@ -46,11 +46,30 @@
                 </span>
             </li>
         </ul>
-        <div class="form-options">
-            <a class="btn btn-primary" href="/admin/manage-deals/<%= deal.id %>/edit">Editar</a>
-            <% if(deal.state=='Cancelado' ){ %>
-                <%- include('../../partials/deleteForm.ejs', { url: `/admin/manage-deals/${deal.id}`}) %>
-                    <% } %>
-        </div>
+        <% if (deal.state === 'Disponivel' ) { %>
+            <div class="form-item suggestion-box">
+                <label>Sugerir este Negócio a um Membro</label>
+
+                <form action="/admin/manage-deals/<%= deal.id %>/suggest" method="POST" class="suggestion-form">
+                    <select name="suggestedTo" required class="suggestion-select">
+                        <option value="" disabled selected>Escolha um membro...</option>
+                        <% members.forEach(member=> { %>
+                            <% if (member.id !==deal.owner.toString() && member.id !==deal.owner._id?.toString()) { %>
+                                <option value="<%= member.id %>">
+                                    <%= member.name %> (<%= member.city %>)
+                                </option>
+                                <% } %>
+                                    <% }) %>
+                    </select>
+                    <button type="submit" class="btn btn-primary stream suggestion-btn">Sugerir</button>
+                </form>
+            </div>
+            <% } %>
+                <div class="form-options">
+                    <a class="btn btn-primary" href="/admin/manage-deals/<%= deal.id %>/edit">Editar</a>
+                    <% if(deal.state=='Cancelado' ){ %>
+                        <%- include('../../partials/deleteForm.ejs', { url: `/admin/manage-deals/${deal.id}`}) %>
+                            <% } %>
+                </div>
     </div>
 </div>

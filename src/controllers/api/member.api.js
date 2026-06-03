@@ -48,7 +48,7 @@ memberApi.me = async (req, res) => {
     const member = await Member.findById(req.user.id, { password: 0 });
 
     if (!member) {
-      return res.status(400).json({ message: "Utilizador não encontrado." });
+      return res.status(400).json({ message: "Membro não encontrado." });
     }
 
     await member.populate({

@@ -83,26 +83,26 @@ h2.name {
 }
 
 .form-item-row {
-    display: flex;
-    align-items: center; 
-    gap: 12px;           
-    width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 
 .checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 6px;            
-    white-space: nowrap; 
-    cursor: pointer;
-    color: #8A94A6;     
-    font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+  color: #8a94a6;
+  font-size: 14px;
 }
 
 .checkbox-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .form-item-img {
@@ -200,54 +200,90 @@ select option:hover {
 }
 
 .radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;              
-    margin-top: 5px;
-    align-items: flex-start
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 5px;
+  align-items: flex-start;
 }
 
 .radio-option {
-    display: flex;
-    align-items: center;   
-    gap: 10px;             
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
 }
 
 .radio-option label {
-    margin: 0;             
-    font-size: 0.9rem;
-    cursor: pointer;       
-    color: var(--color-gray);
+  margin: 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--color-gray);
 }
 
 .radio-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    cursor: pointer;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
 }
 
 .checkbox-option {
-    display: flex;
-    flex-direction: row; 
-    align-items: center; 
-    gap: 10px;           
-    margin-top: 5px;     
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
 }
 
 .checkbox-option label {
-    margin: 0;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--color-gray);
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-gray);
 }
 
 .checkbox-option input[type="checkbox"] {
-    margin: 0;
-    width: 17px;
-    height: 17px;
-    cursor: pointer;
+  margin: 0;
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+}
+
+.suggestion-box {
+  margin-top: 25px;
+  padding: 15px;
+  border: 1px solid #223142;
+  border-radius: 8px;
+  background-color: #131c26;
+}
+
+.suggestion-box label {
+  color: #e6c687; /* O teu tom beije/ouro de realce */
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.suggestion-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.suggestion-select {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #223142;
+  color: #fff;
+  border: 1px solid #33475b;
+  height: auto; 
+}
+
+.suggestion-btn {
+  margin: 0;
+  padding: 10px 20px;
 }
 
 /* select {

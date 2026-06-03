@@ -1,7 +1,7 @@
 import { Admin } from '../models/admin.model.js';
 import bcrypt from "bcrypt";
 
-const DEFAULT_NAME = "Default Admin";
+const DEFAULT_NAME = "Administração";
 const DEFAULT_EMAIL = "admin@admin.com";
 const DEFAULT_PASSWORD = "Admin1!";
 

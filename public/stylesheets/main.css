@@ -73,6 +73,15 @@ body {
   font-size: var(--font-container-size);
 }
 
+.suggestion{
+  width: 25%;
+}
+
+.suggestion a{
+  width: fit-content;
+  line-height: 3rem;
+}
+
 .container-actions {
   display: flex;
   flex-direction: row;
