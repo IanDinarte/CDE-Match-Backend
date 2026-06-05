@@ -9,8 +9,16 @@ memberApi.listMembers = async (req, res) => {
     searchOptions.name = new RegExp(req.query.name, "i");
   }
 
+  if (req.user && req.user.id) {
+    searchOptions._id = { $ne: req.user.id };
+  }
+
+  if (req.query.name != null && req.query.name.trim() !== "") {
+    searchOptions.name = new RegExp(req.query.name, "i");
+  }
+
   try {
-    const memberList = await Member.find(searchOptions);
+    const memberList = await Member.find(searchOptions).sort({ name: 1 });
 
     res.json(memberList);
   } catch (error) {
@@ -30,10 +38,10 @@ memberApi.memberProfile = async (req, res) => {
     }
 
     await member.populate({
-      path: "deals",  
+      path: "deals",
       populate: {
         path: "owner",
-        select: "name",
+        select: "name profilePicture",
       },
     });
 
@@ -52,7 +60,7 @@ memberApi.me = async (req, res) => {
     }
 
     await member.populate({
-      path: "deals",  
+      path: "deals",
       populate: {
         path: "owner",
         select: "name profilePicture",

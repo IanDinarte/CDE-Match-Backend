@@ -5,14 +5,14 @@ import { authController } from "../../controllers/auth.controller.js";
 
 const router = Router();
 
-router.route("/").get(memberApi.listMembers);
+router.route("/").get(authController.protectApi, memberApi.listMembers);
 
 router.route("/me").get(authController.protectApi, memberApi.me);
 
 router.route("/:id").get(memberApi.memberProfile);
 
 // router.route("/:id/edit").get();
-// router.route("/:id").patch(upload.single("profilePicture"),);
+// router.route("/:id").patch(upload.single("profilePicture"), );
 
 // router.route("/:id").delete();
 
@@ -20,7 +20,7 @@ router.route("/:id").get(memberApi.memberProfile);
 // router.route("/:id/business").post(upload.single("logo"), );
 // router.route("/:id/business/:bid").get();
 // router.route("/:id/business/:bid/edit").get();
-// router.route("/:id/business/:bid").patch(upload.single("logo"),);
+// router.route("/:id/business/:bid").patch(upload.single("logo"), );
 // router.route("/:id/business/:bid/delete").patch();
 
 export default router;
