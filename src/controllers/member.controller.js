@@ -1,6 +1,9 @@
+import { deleteFromCloudinary } from "../config/cloudinary.js";
 import { sendMemberWelcomeEmail } from "../config/mailer.js";
 import { Business } from "../models/business.model.js";
+import { Deal } from "../models/deal.model.js";
 import { Member } from "../models/member.model.js";
+import { Suggestion } from "../models/suggestion.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 
@@ -137,14 +140,32 @@ memberController.editMemberPage = async (req, res) => {
 
 memberController.editMember = async (req, res) => {
   try {
-    const profileImageUrl = req.file ? req.file.path : null;
+    const currentMember = await Member.findById(req.params.id);
+    if (!currentMember) {
+      return res.status(404).json({ message: "Membro não encontrado." });
+    }
+
+    let profileImageUrl = req.file ? req.file.path : null;
+
+    if (req.file) {
+      if (currentMember.profilePicture) {
+        await deleteFromCloudinary(currentMember.profilePicture);
+      }
+      profileImageUrl = req.file.path;
+    } else if (req.body.removeProfilePicture === "true") {
+      if (currentMember.profilePicture) {
+        await deleteFromCloudinary(currentMember.profilePicture);
+      }
+      profileImageUrl = null;
+    }
 
     const updateData = {
       name: req.body.name,
       description: req.body.description,
       city: req.body.city,
       dateOfBirth: req.body.dateOfBirth,
-      profilePicture: profileImageUrl
+      profilePicture: profileImageUrl,
+      state: req.body.state,
     };
 
     updateData.email = {
@@ -184,6 +205,7 @@ memberController.editMember = async (req, res) => {
 
     res.redirect(`/admin/manage-accounts/member/${updatedMember.id}`);
   } catch (error) {
+    console.log(error.message);
     const names = Array.isArray(req.body.websiteNames)
       ? req.body.websiteNames
       : [req.body.websiteNames || ""];
@@ -282,15 +304,34 @@ memberController.editBusinessPage = async (req, res) => {
 memberController.editBusiness = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
-    const logo = req.file ? req.file.path : null;
+    if (!member) {
+      return res.status(404).json({ message: "Membro não encontrado." });
+    }
 
     const business = member.business.id(req.params.bid);
+    if (!business) {
+      return res.status(404).json({ message: "Negócio não encontrado." });
+    }
+
+    let businessLogoUrl = business.logo;
+
+    if (req.file) {
+      if (business.logo) {
+        await deleteFromCloudinary(business.logo);
+      }
+      businessLogoUrl = req.file.path;
+    } else if (req.body.removeBusinessLogo === "true") {
+      if (business.logo) {
+        await deleteFromCloudinary(business.logo);
+      }
+      businessLogoUrl = null;
+    }
 
     business.name = req.body.name;
     business.role = req.body.role;
     business.description = req.body.description;
     business.area = req.body.area;
-    business.logo = logo;
+    business.logo = businessLogoUrl;
 
     await member.save();
 
@@ -304,6 +345,16 @@ memberController.editBusiness = async (req, res) => {
 memberController.deleteBusiness = async (req, res) => {
   try {
     const { id, bid } = req.params;
+
+    const member = await Member.findById(id);
+    if (!member) {
+      return res.redirect(`/admin/manage-accounts/member`);
+    }
+
+    const businessToDelete = member.business.id(bid);
+    if (businessToDelete && businessToDelete.logo) {
+      await deleteFromCloudinary(businessToDelete.logo);
+    }
 
     await Member.findByIdAndUpdate(id, {
       $pull: { business: { _id: bid } },
@@ -320,8 +371,37 @@ memberController.deleteMember = async (req, res) => {
   try {
     const memberToDelete = await Member.findById(req.params.id);
 
+    if (!memberToDelete) {
+      return res.redirect("/admin/manage-accounts/member");
+    }
+
     if (memberToDelete.state == "Inativo") {
+      if (memberToDelete.profilePicture) {
+        await deleteFromCloudinary(memberToDelete.profilePicture);
+      }
+
+      const memberDeals = await Deal.find({ owner: memberToDelete._id }).select(
+        "_id",
+      );
+      const dealIds = memberDeals.map((deal) => deal._id);
+
+      if (dealIds.length > 0) {
+        await Suggestion.deleteMany({ deal: { $in: dealIds } });
+        await Deal.deleteMany({ owner: memberToDelete._id });
+        console.log(
+          `Cascata: ${dealIds.length} negócios e as suas sugestões foram limpos.`,
+        );
+      }
+
+      await Suggestion.deleteMany({
+        $or: [
+          { suggestedTo: memberToDelete._id },
+          { suggestedBy: memberToDelete._id },
+        ],
+      });
+
       await memberToDelete.deleteOne();
+
       res.redirect("/admin/manage-accounts/member");
     } else {
       res.redirect(`/admin/manage-accounts/member/${memberToDelete._id}`);

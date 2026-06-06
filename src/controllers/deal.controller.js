@@ -114,6 +114,8 @@ dealController.editDeal = async (req, res) => {
       return res.status(400);
     }
 
+    req.body.confidential = req.body.confidential === "true";
+
     const deal = await Deal.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -140,7 +142,7 @@ dealController.listSuggestions = async (req, res) => {
       .populate("deal", "title")
       .populate("suggestedBy", "name")
       .populate("suggestedTo", "name")
-      .sort({createdAt: -1});
+      .sort({ createdAt: -1 });
 
     res.render("admin/deal/suggestions", {
       suggestions: suggestions || [],

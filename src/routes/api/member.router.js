@@ -5,11 +5,15 @@ import { authController } from "../../controllers/auth.controller.js";
 
 const router = Router();
 
-router.route("/").get(authController.protectApi, memberApi.listMembers);
+// router.route("/").get(authController.protectApi, memberApi.listMembers);
 
-router.route("/me").get(authController.protectApi, memberApi.me);
+router.route("/suggest").get(authController.protectApi, memberApi.listMembersSuggest);
 
-router.route("/:id").get(memberApi.memberProfile);
+// router.route("/me").get(authController.protectApi, memberApi.me);
+
+router.route("/:id").get(authController.protectApi, memberApi.memberProfile);
+
+router.route("/:id").patch(upload.single("profilePicture"), memberApi.editMember);
 
 // router.route("/:id/edit").get();
 // router.route("/:id").patch(upload.single("profilePicture"), );

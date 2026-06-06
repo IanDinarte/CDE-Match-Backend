@@ -49,7 +49,7 @@
             value="<%= (deal.owner && deal.owner.name && deal.owner.email) ? deal.owner.name + ', ' + deal.owner.email.value : '' %>">
         <datalist id="membersList">
             <% members.forEach(member=> { %>
-                <option data-id="<%= member.id %>" value="<%= member.name %>, <%= member.email %>"></option>
+                <option data-id="<%= member.id %>" value="<%= member.name %>, <%= member.email.value %>"></option>
                 <% }) %>
         </datalist>
 

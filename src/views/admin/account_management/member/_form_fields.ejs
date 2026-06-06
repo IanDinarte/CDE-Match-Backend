@@ -96,6 +96,14 @@
             <input class="img-browse" id="imageInput" type="file" name="profilePicture" accept="image/*"
                 value="<%= member.profilePicture %>">
         </label>
+
+        <input type="hidden" name="removeProfilePicture" id="removeProfilePicture" value="false">
+
+        <% if (member.profilePicture) { %>
+            <button type="button" class="btn btn-danger" id="remove-img-btn" style="margin-top: 10px;">
+                Remover Imagem de Perfil
+            </button>
+            <% } %>
     </div>
     <div class="form-item">
         <label>Websites</label>
@@ -183,6 +191,25 @@
         const deleteBtn = e.target.closest('.btn-danger');
         if (deleteBtn) {
             deleteBtn.parentElement.remove();
+        }
+    });
+
+    const removeImgBtn = document.getElementById('remove-img-btn');
+    const removeProfilePictureInput = document.getElementById('removeProfilePicture');
+
+    if (removeImgBtn) {
+        removeImgBtn.addEventListener('click', () => {
+            imagePreview.src = '/assets/default.jpg';
+            imageInput.value = '';
+            removeProfilePictureInput.value = 'true';
+            removeImgBtn.style.display = 'none';
+        });
+    }
+
+    imageInput.addEventListener('change', function () {
+        if (this.files[0]) {
+            if (removeImgBtn) removeImgBtn.style.display = 'block';
+            removeProfilePictureInput.value = 'false';
         }
     });
 </script>

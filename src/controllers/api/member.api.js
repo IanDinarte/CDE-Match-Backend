@@ -1,26 +1,41 @@
 import { Member } from "../../models/member.model.js";
+import { Suggestion } from "../../models/suggestion.model.js";
 
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 const memberApi = {};
 
-memberApi.listMembers = async (req, res) => {
-  let searchOptions = {};
-  if (req.query.name != null && req.query.name !== "") {
-    searchOptions.name = new RegExp(req.query.name, "i");
-  }
+memberApi.listMembersSuggest = async (req, res) => {
+  const { dealId, excludeId } = req.query;
+
+  let idsToExclude = [];
 
   if (req.user && req.user.id) {
-    searchOptions._id = { $ne: req.user.id };
+    idsToExclude.push(req.user.id);
   }
 
-  if (req.query.name != null && req.query.name.trim() !== "") {
-    searchOptions.name = new RegExp(req.query.name, "i");
+  if (excludeId) {
+    idsToExclude.push(excludeId);
   }
 
   try {
-    const memberList = await Member.find(searchOptions).sort({ name: 1 });
+    const memberList = await Member.find({ _id: { $nin: idsToExclude } }).sort({
+      name: 1,
+    });
 
-    res.json(memberList);
+    let alreadySuggestedIds = [];
+    if (dealId) {
+      const existingSuggestions = await Suggestion.find({
+        deal: dealId,
+      }).select("suggestedTo");
+      alreadySuggestedIds = existingSuggestions.map((s) =>
+        s.suggestedTo.toString(),
+      );
+    }
+
+    res.json({
+      members: memberList,
+      alreadySuggestedIds: alreadySuggestedIds,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
@@ -29,9 +44,24 @@ memberApi.listMembers = async (req, res) => {
 
 memberApi.memberProfile = async (req, res) => {
   try {
-    const member = await Member.findById(req.params.id, {
-      password: 0,
-    });
+    let memberId = req.params.id;
+
+    if (memberId === "null" || memberId === "undefined" || memberId === "") {
+      memberId = null;
+    }
+
+    console.log(memberId);
+
+    const member =
+      memberId == null
+        ? await Member.findById(req.user.id, {
+            password: 0,
+          })
+        : await Member.findById(memberId, {
+            password: 0,
+          });
+
+    console.log(req.params.id);
 
     if (!member) {
       return res.status(400).json({ message: "Utilizador não encontrado." });
@@ -47,6 +77,7 @@ memberApi.memberProfile = async (req, res) => {
 
     res.json(member);
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
@@ -69,6 +100,23 @@ memberApi.me = async (req, res) => {
 
     res.json(member);
   } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+memberApi.editMember = async (req, res) => {
+  try {
+    const memberId = req.params.id;
+    const updatedMember = await Member.findByIdAndUpdate(
+      memberId,
+      { $set: req.body },
+      { new: true },
+    );
+
+    res.json(updatedMember);
+  } catch (error) {
+    console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
