@@ -1,3 +1,5 @@
+import { deleteFromCloudinary } from "../../config/cloudinary.js";
+import { Business } from "../../models/business.model.js";
 import { Member } from "../../models/member.model.js";
 import { Suggestion } from "../../models/suggestion.model.js";
 
@@ -50,8 +52,6 @@ memberApi.memberProfile = async (req, res) => {
       memberId = null;
     }
 
-    console.log(memberId);
-
     const member =
       memberId == null
         ? await Member.findById(req.user.id, {
@@ -60,8 +60,6 @@ memberApi.memberProfile = async (req, res) => {
         : await Member.findById(memberId, {
             password: 0,
           });
-
-    console.log(req.params.id);
 
     if (!member) {
       return res.status(400).json({ message: "Utilizador não encontrado." });
@@ -82,39 +80,141 @@ memberApi.memberProfile = async (req, res) => {
   }
 };
 
-memberApi.me = async (req, res) => {
-  try {
-    const member = await Member.findById(req.user.id, { password: 0 });
+// memberApi.me = async (req, res) => {
+//   try {
+//     const member = await Member.findById(req.user.id, { password: 0 });
 
+//     if (!member) {
+//       return res.status(400).json({ message: "Membro não encontrado." });
+//     }
+
+//     await member.populate({
+//       path: "deals",
+//       populate: {
+//         path: "owner",
+//         select: "name profilePicture",
+//       },
+//     });
+
+//     res.json(member);
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+//   }
+// };
+
+memberApi.editMember = async (req, res) => {
+  try {
+    const member = await Member.findById(req.params.id);
     if (!member) {
-      return res.status(400).json({ message: "Membro não encontrado." });
+      return res.status(404).json({ message: "Membro não encontrado." });
     }
 
-    await member.populate({
-      path: "deals",
-      populate: {
-        path: "owner",
-        select: "name profilePicture",
-      },
-    });
+    const updateData = {
+      name: req.body.name,
+      description: req.body.description,
+      city: req.body.city,
+      dateOfBirth: req.body.dateOfBirth,
+    };
 
-    res.json(member);
+    updateData.email = {
+      value: req.body.email,
+      confidential: req.body.emailConfidential === "on",
+    };
+
+    updateData.phone = {
+      value: req.body.phone,
+      confidential: req.body.phoneConfidential === "on",
+    };
+
+    const updatedMember = await Member.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { returnDocument: "after", runValidators: true },
+    );
+
+    res.json(updatedMember);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
 
-memberApi.editMember = async (req, res) => {
+memberApi.addBusiness = async (req, res) => {
   try {
-    const memberId = req.params.id;
-    const updatedMember = await Member.findByIdAndUpdate(
-      memberId,
-      { $set: req.body },
-      { new: true },
-    );
+    //const logoUrl =
 
-    res.json(updatedMember);
+    const member = await Member.findById(req.params.id);
+
+    if (!member) {
+      return res.status(404).json({ message: "Membro não encontrado." });
+    }
+
+    const business = new Business({
+      name: req.body.name,
+      role: req.body.role,
+      description: req.body.description,
+      area: req.body.area,
+      //logo: logoUrl,
+    });
+
+    member.business.push(business);
+
+    await member.save();
+
+    res.status(201).json(business);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+memberApi.editBusiness = async (req, res) => {
+  try {
+    const member = await Member.findById(req.params.id);
+    if (!member) {
+      return res.status(404).json({ message: "Membro não encontrado." });
+    }
+
+    const business = member.business.id(req.params.bid);
+    if (!business) {
+      return res.status(404).json({ message: "Negócio não encontrado." });
+    }
+
+    business.name = req.body.name;
+    business.role = req.body.role;
+    business.description = req.body.description;
+    business.area = req.body.area;
+    // business.logo = businessLogoUrl;
+
+    await member.save();
+
+    res.status(200).json(business);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+memberApi.deleteBusiness = async (req, res) => {
+  try {
+    const { id, bid } = req.params;
+
+    const member = await Member.findById(req.params.id);
+    if (!member) {
+      return res.status(404).json({ message: "Membro não encontrado." });
+    }
+
+    const businessToDelete = member.business.id(bid);
+    if (businessToDelete && businessToDelete.logo) {
+      await deleteFromCloudinary(businessToDelete.logo);
+    }
+
+    await Member.findByIdAndUpdate(id, {
+      $pull: { business: { _id: bid } },
+    });
+
+    res.status(200).json();
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });

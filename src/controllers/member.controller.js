@@ -200,7 +200,7 @@ memberController.editMember = async (req, res) => {
     const updatedMember = await Member.findByIdAndUpdate(
       req.params.id,
       { $set: updateData },
-      { new: true, runValidators: true },
+      { returnDocument: "after", runValidators: true },
     );
 
     res.redirect(`/admin/manage-accounts/member/${updatedMember.id}`);

@@ -15,13 +15,16 @@ router.route("/:id").get(authController.protectApi, memberApi.memberProfile);
 
 router.route("/:id").patch(upload.single("profilePicture"), memberApi.editMember);
 
+router.route("/:id/business").post(upload.single("logo"), memberApi.addBusiness);
+router.route("/:id/business/:bid").patch(upload.single("logo"), memberApi.editBusiness);
+router.route("/:id/business/:bid").delete(memberApi.deleteBusiness);
+
 // router.route("/:id/edit").get();
 // router.route("/:id").patch(upload.single("profilePicture"), );
 
 // router.route("/:id").delete();
 
 // router.route("/:id/business").get();
-// router.route("/:id/business").post(upload.single("logo"), );
 // router.route("/:id/business/:bid").get();
 // router.route("/:id/business/:bid/edit").get();
 // router.route("/:id/business/:bid").patch(upload.single("logo"), );
