@@ -145,8 +145,8 @@ memberController.editMember = async (req, res) => {
       return res.status(404).json({ message: "Membro não encontrado." });
     }
 
-    let profileImageUrl = req.file ? req.file.path : null;
-
+    let profileImageUrl = currentMember.profilePicture;
+    
     if (req.file) {
       if (currentMember.profilePicture) {
         await deleteFromCloudinary(currentMember.profilePicture);
@@ -411,23 +411,5 @@ memberController.deleteMember = async (req, res) => {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
 };
-
-// memberController.expressInterest = async (req, res) => {
-//   try {
-//     const { dealId } = req.params;
-//     const memberId = req.body.memberId;
-
-//     await Deal.findByIdAndUpdate(dealId, {
-//       $addToSet: { interested: memberId }
-//     });
-
-//     res.status(200).json({ message: "Interesse registado com sucesso" });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-// popular lista dos interessados:
-// const deal = await Deal.findById(id).populate('interested', 'name profilePicture');
 
 export { memberController };

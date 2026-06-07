@@ -99,11 +99,10 @@
 
         <input type="hidden" name="removeProfilePicture" id="removeProfilePicture" value="false">
 
-        <% if (member.profilePicture) { %>
-            <button type="button" class="btn btn-danger" id="remove-img-btn" style="margin-top: 10px;">
-                Remover Imagem de Perfil
-            </button>
-            <% } %>
+        <button type="button" class="btn btn-danger" id="remove-img-btn" <%=!member.profilePicture
+            ? 'style="display: none; margin-top: 10px;"' : 'style="margin-top: 10px;"' %>>
+            Remover Imagem de Perfil
+        </button>
     </div>
     <div class="form-item">
         <label>Websites</label>

@@ -47,7 +47,7 @@ dealApi.listDeals = async (req, res) => {
         .populate("owner", "name profilePicture")
         .sort({ createdAt: -1 })) || [];
 
-    res.json(dealList);
+    return res.json(dealList);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
@@ -63,7 +63,7 @@ dealApi.dealDetails = async (req, res) => {
       return res.status(400).json({ message: "Negócio não encontrado." });
     }
 
-    res.json(deal);
+    return res.json(deal);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
@@ -91,15 +91,20 @@ dealApi.newDeal = async (req, res) => {
       $push: { deals: newDeal._id },
     });
 
-    res.status(201).json(newDeal.id);
+    res.status(201).json("Negócio criado com Sucesso.");
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+
+    if (error.name === "ValidationError") {
+      const frontendError = error.message.split(":")[2].trim();
+      return res.status(500).json(frontendError);
+    }
+
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 
 /**
- * UNFINISHED, NAO USAR
  *
  * A parte de deletar sugestões é feita para apagar as sugestões que sejam
  * de deals canceladas ou fechadas, tirando a necessidade de filtra-las.
@@ -120,10 +125,16 @@ dealApi.editDeal = async (req, res) => {
       await Suggestion.deleteMany({ deal: dealId });
     }
 
-    res.json(updatedDeal);
+    return res.json("Informações do Negócio alteradas com Sucesso.");
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+
+    if (error.name === "ValidationError") {
+      const frontendError = error.message.split(":")[2].trim();
+      return res.status(500).json(frontendError);
+    }
+
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 
@@ -140,10 +151,16 @@ dealApi.suggestedDeals = async (req, res) => {
       .populate("suggestedBy", "name")
       .sort({ createdAt: -1 });
 
-    res.json(suggestedDeals || []);
+    return res.json(suggestedDeals || []);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+
+    if (error.name === "ValidationError") {
+      const frontendError = error.message.split(":")[2].trim();
+      return res.status(500).json(frontendError);
+    }
+
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 
@@ -184,10 +201,16 @@ dealApi.createSuggestion = async (req, res) => {
 
     await newSuggestion.save();
 
-    res.json(newSuggestion);
+    return res.status(200).json();
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+
+    if (error.name === "ValidationError") {
+      const frontendError = error.message.split(":")[2].trim();
+      return res.status(500).json(frontendError);
+    }
+
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 

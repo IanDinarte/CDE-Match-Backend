@@ -84,8 +84,13 @@ const MemberSchema = new Schema({
     },
   ],
   business: [Business.schema],
+  matchedDeals: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Deal",
+    },
+  ],
   profilePicture: {
-    // type: Buffer,
     type: String,
   },
   state: {

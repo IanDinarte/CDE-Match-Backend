@@ -7,13 +7,16 @@ const router = Router();
 
 // router.route("/").get(authController.protectApi, memberApi.listMembers);
 
-router.route("/suggest").get(authController.protectApi, memberApi.listMembersSuggest);
+router.route("/suggest").get(authController.protectApi, memberApi.listMemberSuggest);
 
-// router.route("/me").get(authController.protectApi, memberApi.me);
+router.route("/matches").get(authController.protectApi, memberApi.listMemberMatches);
 
 router.route("/:id").get(authController.protectApi, memberApi.memberProfile);
 
 router.route("/:id").patch(upload.single("profilePicture"), memberApi.editMember);
+router.route("/:id/password").patch(memberApi.changePassword);
+
+router.route("/:id/deactivate").patch(memberApi.deactivateAccount);
 
 router.route("/:id/business").post(upload.single("logo"), memberApi.addBusiness);
 router.route("/:id/business/:bid").patch(upload.single("logo"), memberApi.editBusiness);
