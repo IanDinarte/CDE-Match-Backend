@@ -34,7 +34,7 @@ memberApi.listMemberSuggest = async (req, res) => {
       );
     }
 
-    res.json({
+    return res.json({
       members: memberList,
       alreadySuggestedIds: alreadySuggestedIds,
     });
@@ -46,22 +46,31 @@ memberApi.listMemberSuggest = async (req, res) => {
 
 memberApi.listMemberMatches = async (req, res) => {
   try {
-    const member = await Member.findById(req.user.id);
+    const member = await Member.findById(req.user.id)
+      .select("matchedDeals")
+      .populate({
+        path: "matchedDeals",
+        populate: {
+          path: "owner",
+          select: "name profilePicture",
+        },
+      })
+      .lean();
+
     if (!member) {
       return res.status(404).json("Membro não encontrado");
     }
 
-    await member.populate({
-      path: "matchedDeals",
-      populate: {
-        path: "owner",
-        select: "name profilePicture",
-      },
-    });
+    const validDeals = member.matchedDeals
+      ? member.matchedDeals.filter((deal) => deal != null)
+      : [];
 
-    const matchesList = member.matchedDeals;
+    const matchesList = validDeals.map((deal) => ({
+      ...deal,
+      isMatched: true,
+    }));
 
-    res.status(200).json(matchesList || []);
+    return res.status(200).json(matchesList || []);
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
     return res.status(500).json(error.name + " " + error.message);
@@ -72,32 +81,52 @@ memberApi.memberProfile = async (req, res) => {
   try {
     let memberId = req.params.id;
 
-    if (memberId === "null" || memberId === "undefined" || memberId === "") {
-      memberId = null;
+    if (
+      !memberId ||
+      memberId === "null" ||
+      memberId === "undefined" ||
+      memberId === ""
+    ) {
+      memberId = req.user.id;
     }
 
-    const member =
-      memberId == null
-        ? await Member.findById(req.user.id, {
-            password: 0,
-          })
-        : await Member.findById(memberId, {
-            password: 0,
-          });
+    const member = await Member.findById(memberId)
+      .select("-password")
+      .populate({
+        path: "deals",
+        populate: {
+          path: "owner",
+          select: "name profilePicture",
+        },
+      })
+      .lean();
 
     if (!member) {
-      return res.status(400).json({ message: "Utilizador não encontrado." });
+      return res.status(404).json({ message: "Utilizador não encontrado." });
     }
 
-    await member.populate({
-      path: "deals",
-      populate: {
-        path: "owner",
-        select: "name profilePicture",
-      },
-    });
+    if (member.deals && member.deals.length > 0) {
+      let matchedDealsArray = [];
 
-    return res.json(member);
+      if (memberId === req.user.id) {
+        matchedDealsArray = member.matchedDeals || [];
+      } else {
+        const currentUser = await Member.findById(req.user.id)
+          .select("matchedDeals")
+          .lean();
+        matchedDealsArray = currentUser?.matchedDeals || [];
+      }
+
+      const matchedDealsSet = new Set(
+        matchedDealsArray.map((id) => id.toString()),
+      );
+
+      member.deals.forEach((deal) => {
+        deal.isMatched = matchedDealsSet.has(deal._id.toString());
+      });
+    }
+
+    return res.status(200).json(member);
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
     return res.status(500).json(error.name + " " + error.message);
@@ -247,7 +276,7 @@ memberApi.addBusiness = async (req, res) => {
 
     await member.save();
 
-    res.status(201).json("Empresa Criada com Sucesso.");
+    return res.status(201).json("Empresa Criada com Sucesso.");
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 
@@ -293,7 +322,7 @@ memberApi.editBusiness = async (req, res) => {
 
     await member.save();
 
-    res.status(200).json("Empressa editada com Sucesso.");
+    return res.status(200).json("Empressa editada com Sucesso.");
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 
@@ -324,7 +353,7 @@ memberApi.deleteBusiness = async (req, res) => {
       $pull: { business: { _id: bid } },
     });
 
-    res.status(200).json("Empresa deletada com Sucesso.");
+    return res.status(200).json("Empresa deletada com Sucesso.");
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 

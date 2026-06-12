@@ -9,7 +9,11 @@ authApi.login = async (req, res) => {
     const { email, password } = req.body;
     const member = await Member.findOne({ "email.value": email });
 
-    if (!member || !(await member.comparePassword(password)) || member.state === "Inativo") {
+    if (
+      !member ||
+      !(await member.comparePassword(password)) ||
+      member.state === "Inativo"
+    ) {
       return res.status(400).json({ message: "Credenciais inválidas." });
     }
 
@@ -19,10 +23,10 @@ authApi.login = async (req, res) => {
       { expiresIn: "1d" },
     );
 
-    res.json(token);
+    return res.json(token);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);  
   }
 };
 

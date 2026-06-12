@@ -47,26 +47,51 @@ dealApi.listDeals = async (req, res) => {
         .populate("owner", "name profilePicture")
         .sort({ createdAt: -1 })) || [];
 
-    return res.json(dealList);
+    const currentUser = await Member.findById(req.user.id).select(
+      "matchedDeals",
+    );
+
+    const userMatches =
+      currentUser && currentUser.matchedDeals
+        ? currentUser.matchedDeals.map((id) => id.toString())
+        : [];
+
+    const dealListFinal = dealList.map((deal) => {
+      const dealObj = deal.toObject();
+      dealObj.isMatched = userMatches.includes(dealObj._id.toString());
+      return dealObj;
+    });
+
+    return res.status(200).json(dealListFinal);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 
 dealApi.dealDetails = async (req, res) => {
   try {
-    const deal = await Deal.findById(req.params.id);
-    await deal.populate("owner");
+    const dealId = req.params.id;
+
+    const deal = await Deal.findById(dealId)
+      .populate("owner", "name profilePicture")
+      .lean();
 
     if (!deal) {
-      return res.status(400).json({ message: "Negócio não encontrado." });
+      return res.status(404).json({ message: "Negócio não encontrado." });
     }
 
-    return res.json(deal);
+    const matchExists = await Member.exists({
+      _id: req.user.id,
+      matchedDeals: dealId,
+    });
+
+    deal.isMatched = !!matchExists;
+
+    return res.status(200).json(deal);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 
@@ -91,7 +116,7 @@ dealApi.newDeal = async (req, res) => {
       $push: { deals: newDeal._id },
     });
 
-    res.status(201).json("Negócio criado com Sucesso.");
+    return res.status(201).json("Negócio criado com Sucesso.");
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 
@@ -149,9 +174,31 @@ dealApi.suggestedDeals = async (req, res) => {
         },
       })
       .populate("suggestedBy", "name")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    return res.json(suggestedDeals || []);
+    if (!suggestedDeals || suggestedDeals.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const currentUser = await Member.findById(req.user.id)
+      .select("matchedDeals")
+      .lean();
+
+    const matchedDealsSet = new Set(
+      currentUser?.matchedDeals?.map((id) => id.toString()) || [],
+    );
+
+    const formattedSuggestions = suggestedDeals.map((suggestion) => {
+      if (suggestion.deal) {
+        suggestion.deal.isMatched = matchedDealsSet.has(
+          suggestion.deal._id.toString(),
+        );
+      }
+      return suggestion;
+    });
+
+    return res.status(200).json(formattedSuggestions);
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 
@@ -220,10 +267,52 @@ dealApi.rejectSuggestion = async (req, res) => {
 
     await Suggestion.findByIdAndDelete(suggestionId);
 
-    res.json();
+    return res.json();
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);
+  }
+};
+
+dealApi.match = async (req, res) => {
+  try {
+    const dealId = req.params.id;
+
+    const member = await Member.findById(req.user.id);
+    if (!member) {
+      return res.status(404).json("Membro não encontrado.");
+    }
+
+    const deal = await Deal.findById(dealId);
+    if (!deal) {
+      return res.status(404).json("Negócio não encontrado.");
+    }
+
+    const alreadyMatched = member.matchedDeals.some(
+      (id) => id.toString() === dealId,
+    );
+
+    let isMatched = false;
+
+    if (alreadyMatched) {
+      await Member.findByIdAndUpdate(req.user.id, {
+        $pull: { matchedDeals: dealId },
+      });
+      isMatched = false;
+    } else {
+      await Member.findByIdAndUpdate(req.user.id, {
+        $addToSet: { matchedDeals: dealId },
+      });
+      isMatched = true;
+    }
+
+    return res.status(200).json({
+      message: "Operação realizada com sucesso.",
+      isMatched: isMatched,
+    });
+  } catch (error) {
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);
   }
 };
 
