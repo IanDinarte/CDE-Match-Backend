@@ -14,7 +14,7 @@ import seedDefaultAdmin from "./src/config/setupAdmin.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
 app.set("views", "./src/views"); // Define onde as páginas ficarão
@@ -40,11 +40,12 @@ app.use("/admin", authController.verifyLogin, adminRouter);
 app.use("/api", apiRouter);
 
 connectDB()
-  .then(() => {
+  .then(async () => {
+    await seedDefaultAdmin();
+
     app.listen(port, () => {
       console.log(`⚙️  Servidor rodando em http://localhost:${port}`);
     });
-    seedDefaultAdmin();
   })
   .catch((err) => {
     console.error("ERRO na conexão com MongoDB:", err);
