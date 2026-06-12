@@ -17,7 +17,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
-app.set("views", "./src/views"); // Define onde as páginas ficarão
+app.set("views", "./src/views");
 app.set("layout", "layout.ejs");
 app.use(expressEjsLayouts);
 app.use(express.json());
@@ -44,7 +44,7 @@ connectDB()
     await seedDefaultAdmin();
 
     app.listen(port, () => {
-      console.log(`⚙️  Servidor rodando em http://localhost:${port}`);
+      // console.log(`⚙️  Servidor rodando em http://localhost:${port}`);
     });
   })
   .catch((err) => {
