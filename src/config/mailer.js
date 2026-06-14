@@ -1,19 +1,33 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  // service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS 
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("Erro na ligação ao Email:", error);
+  } else {
+    console.log("Ligação de Email pronta.");
   }
 });
 
-export const sendAdminWelcomeEmail = async (adminEmail, adminName, password) => {
+export const sendAdminWelcomeEmail = async (
+  adminEmail,
+  adminName,
+  password,
+) => {
   const mailOptions = {
     from: '"CDE Match Team" <no-reply@cdematch.pt>',
     to: adminEmail,
-    subject: 'Bem-vindo à Equipa de Administração - CDE Match',
-    // substituir url do login com o apk
+    subject: "Bem-vindo à Equipa de Administração - CDE Match",
     html: `
       <h1>Olá, ${adminName}!</h1>
       <p>A tua conta de administrador foi criada com sucesso.</p>
@@ -24,17 +38,21 @@ export const sendAdminWelcomeEmail = async (adminEmail, adminName, password) => 
         <li><strong>Password Temporária:</strong> ${password}</li>
       </ul>
       <p>Por segurança, recomendamos que alteres a tua password após o primeiro login.</p>
-    `
+    `,
   };
 
   return transporter.sendMail(mailOptions);
 };
 
-export const sendMemberWelcomeEmail = async (memberEmail, memberName, password) => {
+export const sendMemberWelcomeEmail = async (
+  memberEmail,
+  memberName,
+  password,
+) => {
   const mailOptions = {
     from: '"CDE Match Team" <no-reply@cdematch.pt>',
     to: memberEmail,
-    subject: 'Bem-vindo à comunidade CDE Match',
+    subject: "Bem-vindo à comunidade CDE Match",
     html: `
       <h1>Olá, ${memberName}!</h1>
       <p>A tua conta de membro foi criada com sucesso.</p>
@@ -45,7 +63,7 @@ export const sendMemberWelcomeEmail = async (memberEmail, memberName, password) 
         <li><strong>Password Temporária:</strong> ${password}</li>
       </ul>
       <p>Por segurança, recomendamos que alteres a tua password após o primeiro login.</p>
-    `
+    `,
   };
 
   return transporter.sendMail(mailOptions);
