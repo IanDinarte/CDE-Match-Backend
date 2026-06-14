@@ -13,6 +13,7 @@ export const sendAdminWelcomeEmail = async (adminEmail, adminName, password) => 
     from: '"CDE Match Team" <no-reply@cdematch.pt>',
     to: adminEmail,
     subject: 'Bem-vindo à Equipa de Administração - CDE Match',
+    // substituir url do login com o apk
     html: `
       <h1>Olá, ${adminName}!</h1>
       <p>A tua conta de administrador foi criada com sucesso.</p>

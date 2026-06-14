@@ -24,7 +24,9 @@
         <label>Telemóvel*</label>
         <div class="form-item-row">
             <input class="form-input text-input" type="tel" required="true" maxlength="11" id="phone-visible"
-                name="phone" value="<%= member.phone.value %>">
+                value="<%= member.phone.value %>">
+
+            <input type="hidden" id="phone-hidden" name="phone" value="<%= member.phone.value %>">
 
             <label class="checkbox-container">
                 <span>Confidencial</span>
