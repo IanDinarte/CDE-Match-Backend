@@ -1,70 +1,62 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  // service: 'gmail',
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-transporter.verify(function (error, success) {
-  if (error) {
-    console.log("Erro na ligação ao Email:", error);
-  } else {
-    console.log("Ligação de Email pronta.");
-  }
-});
-
-export const sendAdminWelcomeEmail = async (
-  adminEmail,
-  adminName,
-  password,
-) => {
-  const mailOptions = {
-    from: '"CDE Match Team" <no-reply@cdematch.pt>',
-    to: adminEmail,
-    subject: "Bem-vindo à Equipa de Administração - CDE Match",
-    html: `
-      <h1>Olá, ${adminName}!</h1>
-      <p>A tua conta de administrador foi criada com sucesso.</p>
-      <p><strong>Informações de Acesso:</strong></p>
-      <ul>
-        <li><strong>URL:</strong> http://localhost:3000/auth/login</li>
-        <li><strong>Email:</strong> ${adminEmail}</li>
-        <li><strong>Password Temporária:</strong> ${password}</li>
-      </ul>
-      <p>Por segurança, recomendamos que alteres a tua password após o primeiro login.</p>
-    `,
-  };
-
-  return transporter.sendMail(mailOptions);
-};
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendMemberWelcomeEmail = async (
   memberEmail,
   memberName,
   password,
 ) => {
-  const mailOptions = {
-    from: '"CDE Match Team" <no-reply@cdematch.pt>',
-    to: memberEmail,
-    subject: "Bem-vindo à comunidade CDE Match",
-    html: `
-      <h1>Olá, ${memberName}!</h1>
-      <p>A tua conta de membro foi criada com sucesso.</p>
+  try {
+    const data = await resend.emails.send({
+      from: "CDE Match Team <onboarding@resend.dev>",
+      to: memberEmail,
+      subject: "Bem-vindo à comunidade CDE Match",
+      html: `
+        <h1>Olá, ${memberName}!</h1>
+        <p>A tua conta de membro foi criada com sucesso.</p>
+        <p><strong>Informações de Acesso:</strong></p>
+        <ul>
+          <li><strong>Email:</strong> ${memberEmail}</li>
+          <li><strong>Password Temporária:</strong> ${password}</li>
+        </ul>
+      `,
+    });
+
+    console.log("Email enviado pelo Resend:", data);
+    return data;
+  } catch (error) {
+    console.error("Erro no Resend:", error);
+    throw error;
+  }
+};
+
+export const sendAdminWelcomeEmail = async (
+  adminEmail,
+  adminName,
+  password,
+) => {
+  try {
+    const data = await resend.emails.send({
+      from: '"CDE Match Team" <onboarding@resend.pt>',
+      to: adminEmail,
+      subject: "Bem-vindo à Equipa de Administração - CDE Match",
+      html: `
+      <h1>Olá, ${adminName}!</h1>
+      <p>A tua conta de administrador foi criada com sucesso.</p>
       <p><strong>Informações de Acesso:</strong></p>
       <ul>
-        <li><strong>URL:</strong> link do login frontend</li>
-        <li><strong>Email:</strong> ${memberEmail}</li>
+        <li><strong>URL:</strong> https://cde-match-backend.onrender.com/</li>
+        <li><strong>Email:</strong> ${adminEmail}</li>
         <li><strong>Password Temporária:</strong> ${password}</li>
       </ul>
       <p>Por segurança, recomendamos que alteres a tua password após o primeiro login.</p>
     `,
-  };
-
-  return transporter.sendMail(mailOptions);
+    });
+    console.log("Email enviado pelo Resend:", data);
+    return data;
+  } catch (error) {
+    console.error("Erro no Resend:", error);
+    throw error;
+  }
 };

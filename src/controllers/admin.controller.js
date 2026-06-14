@@ -42,7 +42,11 @@ adminController.newAdmin = async (req, res) => {
 
     const newAdmin = await admin.save();
 
-    await sendAdminWelcomeEmail(req.body.email, req.body.name, req.body.password)
+    // await sendAdminWelcomeEmail(
+    //   req.body.email,
+    //   req.body.name,
+    //   req.body.password,
+    // );
 
     res.redirect(`/admin/manage-accounts/admin/${newAdmin._id}`);
   } catch (error) {
