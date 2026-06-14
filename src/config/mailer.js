@@ -2,11 +2,11 @@
 
 // const resend = new Resend(process.env.RESEND_API_KEY);
 
-// export const sendMemberWelcomeEmail = async (
-//   memberEmail,
-//   memberName,
-//   password,
-// ) => {
+export const sendMemberWelcomeEmail = async (
+  memberEmail,
+  memberName,
+  password,
+) => {
 //   try {
 //     const data = await resend.emails.send({
 //       from: "CDE Match Team <onboarding@resend.dev>",
@@ -21,7 +21,7 @@
 //           <li><strong>Password Temporária:</strong> ${password}</li>
 //         </ul>
 //       `,
-//     });
+    // });
 
 //     console.log("Email enviado pelo Resend:", data);
 //     return data;
@@ -29,13 +29,13 @@
 //     console.error("Erro no Resend:", error);
 //     throw error;
 //   }
-// };
+};
 
-// export const sendAdminWelcomeEmail = async (
-//   adminEmail,
-//   adminName,
-//   password,
-// ) => {
+export const sendAdminWelcomeEmail = async (
+  adminEmail,
+  adminName,
+  password,
+) => {
 //   try {
 //     const data = await resend.emails.send({
 //       from: '"CDE Match Team" <onboarding@resend.pt>',
@@ -59,4 +59,4 @@
 //     console.error("Erro no Resend:", error);
 //     throw error;
 //   }
-// };
+};
