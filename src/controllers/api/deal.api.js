@@ -7,11 +7,27 @@ const dealApi = {};
 
 dealApi.listDeals = async (req, res) => {
   try {
-    const { title, type, area, minPrice, maxPrice } = req.query;
+    const { title, type, area, minPrice, maxPrice, matchFilter } = req.query;
+
+    const currentUser = await Member.findById(req.user.id).select(
+      "matchedDeals",
+    );
+
+    const userMatchesArray = currentUser?.matchedDeals || [];
+    const userMatchesStrings = userMatchesArray.map((id) => id.toString());
+
     let queryConditions = [];
 
     queryConditions.push({ confidential: false });
     queryConditions.push({ state: "Disponivel" });
+
+    if (matchFilter === "2") {
+      if (userMatchesArray.length > 0) {
+        queryConditions.push({ _id: { $nin: userMatchesArray } });
+      }
+    } else if (matchFilter === "1") {
+      queryConditions.push({ _id: { $in: userMatchesArray } });
+    }
 
     if (title && title.trim() !== "") {
       const regex = new RegExp(title, "i");
@@ -47,18 +63,9 @@ dealApi.listDeals = async (req, res) => {
         .populate("owner", "name profilePicture")
         .sort({ createdAt: -1 })) || [];
 
-    const currentUser = await Member.findById(req.user.id).select(
-      "matchedDeals",
-    );
-
-    const userMatches =
-      currentUser && currentUser.matchedDeals
-        ? currentUser.matchedDeals.map((id) => id.toString())
-        : [];
-
     const dealListFinal = dealList.map((deal) => {
       const dealObj = deal.toObject();
-      dealObj.isMatched = userMatches.includes(dealObj._id.toString());
+      dealObj.isMatched = userMatchesStrings.includes(dealObj._id.toString());
       return dealObj;
     });
 
@@ -129,6 +136,30 @@ dealApi.newDeal = async (req, res) => {
   }
 };
 
+dealApi.deleteDeal = async (req, res) => {
+  try {
+    const dealToDelete = await Deal.findById(req.params.id);
+
+    if (!dealToDelete) {
+      res.status(404).json("Negócio não encontrado.");
+    }
+
+    if (dealToDelete.state == "Cancelado") {
+      await dealToDelete.deleteOne();
+      await Suggestion.deleteMany({ deal: dealToDelete._id });
+
+      res.status(200).json("Negócio deletado com sucesso.");
+    } else {
+      res
+        .status(400)
+        .json("O Negócio precisa ser cancelado antes de ser deletado.");
+    }
+  } catch (error) {
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);
+  }
+};
+
 /**
  *
  * A parte de deletar sugestões é feita para apagar as sugestões que sejam
@@ -146,9 +177,9 @@ dealApi.editDeal = async (req, res) => {
       { new: true },
     );
 
-    if (updatedDeal.state === "Fechado" || updatedDeal.state === "Cancelado") {
-      await Suggestion.deleteMany({ deal: dealId });
-    }
+    // if (updatedDeal.state === "Fechado" || updatedDeal.state === "Cancelado") {
+    //   await Suggestion.deleteMany({ deal: dealId });
+    // }
 
     return res.json("Informações do Negócio alteradas com Sucesso.");
   } catch (error) {
@@ -168,6 +199,7 @@ dealApi.suggestedDeals = async (req, res) => {
     const suggestedDeals = await Suggestion.find({ suggestedTo: req.user.id })
       .populate({
         path: "deal",
+        match: { state: { $in: "Disponivel" } },
         populate: {
           path: "owner",
           select: "name profilePicture",
@@ -177,7 +209,11 @@ dealApi.suggestedDeals = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    if (!suggestedDeals || suggestedDeals.length === 0) {
+    const availableSuggestions = suggestedDeals.filter(
+      (suggestion) => suggestion.deal !== null,
+    );
+
+    if (!availableSuggestions || availableSuggestions.length === 0) {
       return res.status(200).json([]);
     }
 
@@ -189,7 +225,7 @@ dealApi.suggestedDeals = async (req, res) => {
       currentUser?.matchedDeals?.map((id) => id.toString()) || [],
     );
 
-    const formattedSuggestions = suggestedDeals.map((suggestion) => {
+    const formattedSuggestions = availableSuggestions.map((suggestion) => {
       if (suggestion.deal) {
         suggestion.deal.isMatched = matchedDealsSet.has(
           suggestion.deal._id.toString(),

@@ -126,9 +126,9 @@ dealController.editDeal = async (req, res) => {
       });
     }
 
-    if (deal.state === "Fechado" || deal.state === "Cancelado") {
-      await Suggestion.deleteMany({ deal: deal._id });
-    }
+    // if (deal.state === "Fechado" || deal.state === "Cancelado") {
+    //   await Suggestion.deleteMany({ deal: deal._id });
+    // }
 
     res.redirect(`${deal._id}`);
   } catch (error) {
@@ -199,11 +199,16 @@ dealController.deleteDeal = async (req, res) => {
   try {
     const dealToDelete = await Deal.findById(req.params.id);
 
+    if (!dealToDelete) {
+      return res.redirect("/admin/manage-deals/");
+    }
+
     if (dealToDelete.state == "Cancelado") {
       await dealToDelete.deleteOne();
+      await Suggestion.deleteMany({ deal: dealToDelete._id });
+
       res.redirect("/admin/manage-deals/");
     } else {
-      //mensagem pop up
       res.redirect(`/admin/manage-deals/${dealToDelete._id}`);
     }
   } catch (error) {

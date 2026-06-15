@@ -6,6 +6,24 @@ import { Suggestion } from "../../models/suggestion.model.js";
 const INTERNAL_ERROR_MSG = "Internal Server Error";
 const memberApi = {};
 
+memberApi.listMembers = async (req, res) => {
+  try {
+    const { name } = req.query;
+    let searchOptions = {};
+
+    if (name && name.trim() !== "") {
+      searchOptions.name = new RegExp(name, "i");
+    }
+
+    const matchingMembers = await Member.find(searchOptions);
+
+    return res.status(200).json(matchingMembers);
+  } catch (error) {
+    console.log(INTERNAL_ERROR_MSG + " " + error.message);
+    return res.status(500).json(error.name + " " + error.message);
+  }
+};
+
 memberApi.listMemberSuggest = async (req, res) => {
   const { dealId, excludeId } = req.query;
 
@@ -44,39 +62,6 @@ memberApi.listMemberSuggest = async (req, res) => {
   }
 };
 
-memberApi.listMemberMatches = async (req, res) => {
-  try {
-    const member = await Member.findById(req.user.id)
-      .select("matchedDeals")
-      .populate({
-        path: "matchedDeals",
-        populate: {
-          path: "owner",
-          select: "name profilePicture",
-        },
-      })
-      .lean();
-
-    if (!member) {
-      return res.status(404).json("Membro não encontrado");
-    }
-
-    const validDeals = member.matchedDeals
-      ? member.matchedDeals.filter((deal) => deal != null)
-      : [];
-
-    const matchesList = validDeals.map((deal) => ({
-      ...deal,
-      isMatched: true,
-    }));
-
-    return res.status(200).json(matchesList || []);
-  } catch (error) {
-    console.log(INTERNAL_ERROR_MSG + " " + error.message);
-    return res.status(500).json(error.name + " " + error.message);
-  }
-};
-
 memberApi.memberProfile = async (req, res) => {
   try {
     let memberId = req.params.id;
@@ -90,10 +75,22 @@ memberApi.memberProfile = async (req, res) => {
       memberId = req.user.id;
     }
 
+    const isOwnProfile = memberId === req.user.id;
+
+    let dealConditions = {};
+
+    if (!isOwnProfile) {
+      dealConditions = {
+        state: { $in: ["Fechado", "Disponivel"] },
+        confidential: false,
+      };
+    }
+
     const member = await Member.findById(memberId)
       .select("-password")
       .populate({
         path: "deals",
+        match: dealConditions,
         populate: {
           path: "owner",
           select: "name profilePicture",
@@ -125,6 +122,23 @@ memberApi.memberProfile = async (req, res) => {
         deal.isMatched = matchedDealsSet.has(deal._id.toString());
       });
     }
+
+    const ordemEstados = {
+      Disponivel: 1,
+      Fechado: 2,
+      Cancelado: 3,
+    };
+
+    member.deals.sort((a, b) => {
+      const pesoA = ordemEstados[a.state] || 4;
+      const pesoB = ordemEstados[b.state] || 4;
+
+      if (pesoA !== pesoB) {
+        return pesoA - pesoB;
+      }
+
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
 
     return res.status(200).json(member);
   } catch (error) {

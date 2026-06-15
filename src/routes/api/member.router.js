@@ -1,25 +1,30 @@
 import { Router } from "express";
 import { upload } from "../../config/cloudinary.js";
 import { memberApi } from "../../controllers/api/member.api.js";
-import { authController } from "../../controllers/auth.controller.js";
 
 const router = Router();
 
-// router.route("/").get(authController.protectApi, memberApi.listMembers);
+router.route("/").get(memberApi.listMembers);
 
-router.route("/suggest").get(authController.protectApi, memberApi.listMemberSuggest);
+router.route("/suggest").get(memberApi.listMemberSuggest);
 
-router.route("/matches").get(authController.protectApi, memberApi.listMemberMatches);
+// router.route("/matches").get(memberApi.listMemberMatches);
 
-router.route("/:id").get(authController.protectApi, memberApi.memberProfile);
+router.route("/:id").get(memberApi.memberProfile);
 
-router.route("/:id").patch(upload.single("profilePicture"), memberApi.editMember);
+router
+  .route("/:id")
+  .patch(upload.single("profilePicture"), memberApi.editMember);
 router.route("/:id/password").patch(memberApi.changePassword);
 
 router.route("/:id/deactivate").patch(memberApi.deactivateAccount);
 
-router.route("/:id/business").post(upload.single("logo"), memberApi.addBusiness);
-router.route("/:id/business/:bid").patch(upload.single("logo"), memberApi.editBusiness);
+router
+  .route("/:id/business")
+  .post(upload.single("logo"), memberApi.addBusiness);
+router
+  .route("/:id/business/:bid")
+  .patch(upload.single("logo"), memberApi.editBusiness);
 router.route("/:id/business/:bid").delete(memberApi.deleteBusiness);
 
 // router.route("/:id/edit").get();
