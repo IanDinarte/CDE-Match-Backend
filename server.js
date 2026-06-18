@@ -9,6 +9,7 @@ import { connectDB } from "./src/config/database.js";
 import { authController } from "./src/controllers/auth.controller.js";
 import methodOverride from "method-override";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import seedDefaultAdmin from "./src/config/setupAdmin.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 app.use(cookieParser());
+app.use(cors());
 app.use(authController.setUser);
 
 // routes import
