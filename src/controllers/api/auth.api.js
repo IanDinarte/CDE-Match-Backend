@@ -14,7 +14,7 @@ authApi.login = async (req, res) => {
       !(await member.comparePassword(password)) ||
       member.state === "Inativo"
     ) {
-      return res.status(400).json({ message: "Credenciais inválidas." });
+      return res.status(400).json("Credenciais inválidas.");
     }
 
     const token = jwt.sign(
