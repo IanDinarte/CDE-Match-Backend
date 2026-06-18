@@ -99,7 +99,7 @@ memberApi.memberProfile = async (req, res) => {
       .lean();
 
     if (!member) {
-      return res.status(404).json({ message: "Utilizador não encontrado." });
+      return res.status(404).json("Utilizador não encontrado.");
     }
 
     if (member.deals && member.deals.length > 0) {
@@ -151,7 +151,7 @@ memberApi.editMember = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
     if (!member) {
-      return res.status(404).json({ message: "Membro não encontrado." });
+      return res.status(404).json("Membro não encontrado.");
     }
 
     const updateData = {
@@ -267,7 +267,7 @@ memberApi.addBusiness = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
     if (!member) {
-      return res.status(404).json({ message: "Membro não encontrado." });
+      return res.status(404).json("Membro não encontrado.");
     }
 
     let businessLogoUri = null;
@@ -307,12 +307,12 @@ memberApi.editBusiness = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
     if (!member) {
-      return res.status(404).json({ message: "Membro não encontrado." });
+      return res.status(404).json("Membro não encontrado.");
     }
 
     const business = member.business.id(req.params.bid);
     if (!business) {
-      return res.status(404).json({ message: "Negócio não encontrado." });
+      return res.status(404).json("Negócio não encontrado.");
     }
 
     let businessLogoUrl = business.logo;
@@ -355,7 +355,7 @@ memberApi.deleteBusiness = async (req, res) => {
 
     const member = await Member.findById(req.params.id);
     if (!member) {
-      return res.status(404).json({ message: "Membro não encontrado." });
+      return res.status(404).json("Membro não encontrado.");
     }
 
     const businessToDelete = member.business.id(bid);
@@ -384,7 +384,7 @@ memberApi.deactivateAccount = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
     if (!member) {
-      return res.status(404).json({ message: "Membro não encontrado." });
+      return res.status(404).json("Membro não encontrado.");
     }
 
     await Member.findByIdAndUpdate(req.params.id, { state: "Inativo" });
