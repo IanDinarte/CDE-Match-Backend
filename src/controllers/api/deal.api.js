@@ -85,7 +85,7 @@ dealApi.dealDetails = async (req, res) => {
       .lean();
 
     if (!deal) {
-      return res.status(404).json({ message: "Negócio não encontrado." });
+      return res.status(404).json("Negócio não encontrado.");
     }
 
     const matchExists = await Member.exists({
