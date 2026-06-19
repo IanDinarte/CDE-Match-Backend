@@ -2,6 +2,11 @@
     <h2>Editar Administrador</h2>
     <form action="/admin/manage-accounts/admin/<%= admin.id %>?_method=PATCH" method="POST">
         <%- include('_form_fields') %>
+        <% if(admin.id==user.id) {%>
+            <div class="form-options">
+                <a class="btn btn-primary" href="/admin/manage-accounts/admin/password">Alterar Palavra Passe</a>
+            </div>
+        <% }%>
         <div class="form-options">
             <button class="btn btn-primary" type="submit">Atualizar</button>
             <a class="btn btn-cancel" href="/admin/manage-accounts/admin/<%= admin.id %>">Cancelar</a>
