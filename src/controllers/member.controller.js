@@ -64,11 +64,11 @@ memberController.newMember = async (req, res) => {
       name: req.body.name,
       email: {
         value: req.body.email,
-        confidential: req.body.emailConfidential === "on", // Converte "on" para true, e undefined para false
+        confidential: req.body.emailConfidential === "on", 
       },
       phone: {
         value: req.body.phone,
-        confidential: req.body.phoneConfidential === "on", // Converte "on" para true, e undefined para false
+        confidential: req.body.phoneConfidential === "on", 
       },
       password: req.body.password,
       description: req.body.description,
@@ -118,11 +118,16 @@ memberController.memberProfile = async (req, res) => {
       password: 0,
     });
 
+    const businesses = await Business.find({ owner: member._id });
+
     if (!member) {
-      return res.status(400).json({ message: "Utilizador não encontrado." });
+      return res.status(404).json({ message: "Utilizador não encontrado." });
     }
 
-    res.render("admin/account_management/member/show", { member: member });
+    res.render("admin/account_management/member/show", {
+      member: member,
+      businesses: businesses,
+    });
   } catch (error) {
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
   }
@@ -146,7 +151,7 @@ memberController.editMember = async (req, res) => {
     }
 
     let profileImageUrl = currentMember.profilePicture;
-    
+
     if (req.file) {
       if (currentMember.profilePicture) {
         await deleteFromCloudinary(currentMember.profilePicture);
@@ -232,12 +237,10 @@ memberController.editMember = async (req, res) => {
 
 memberController.businessDetails = async (req, res) => {
   try {
-    const member = await Member.findById(req.params.id);
-    const business = member.business.id(req.params.bid);
+    const business = await Business.findById(req.params.bid).populate("owner");
 
     res.render("admin/account_management/member/business/show", {
       business: business,
-      member: member,
     });
   } catch (error) {
     if (error.name === "ValidationError") {
@@ -252,6 +255,11 @@ memberController.businessDetails = async (req, res) => {
 memberController.newBusinessPage = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
+
+    if (!member) {
+      return res.status(404).json({ message: "Utilizador não encontrado." });
+    }
+
     res.render("admin/account_management/member/business/new", {
       business: new Business(),
       member: member,
@@ -267,6 +275,9 @@ memberController.newBusiness = async (req, res) => {
     const logoUrl = req.file ? req.file.path : null;
 
     const member = await Member.findById(req.params.id);
+    if (!member) {
+      return res.status(404).json({ message: "Utilizador não encontrado." });
+    }
 
     const business = new Business({
       name: req.body.name,
@@ -274,13 +285,12 @@ memberController.newBusiness = async (req, res) => {
       description: req.body.description,
       area: req.body.area,
       logo: logoUrl,
+      owner: member._id,
     });
 
-    member.business.push(business);
+    await business.save();
 
-    await member.save();
-
-    res.redirect(`/admin/manage-accounts/member/${member.id}`);
+    res.redirect(`/admin/manage-accounts/member/${member._id}`);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
@@ -290,7 +300,15 @@ memberController.newBusiness = async (req, res) => {
 memberController.editBusinessPage = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
-    const business = member.business.id(req.params.bid);
+    if (!member) {
+      return res.status(404).json({ message: "Utilizador não encontrado." });
+    }
+
+    const business = await Business.findById(req.params.bid);
+    if (!business) {
+      return res.status(404).json({ message: "Empresa não encontrada." });
+    }
+
     res.render("admin/account_management/member/business/edit", {
       business: business,
       member: member,
@@ -308,9 +326,9 @@ memberController.editBusiness = async (req, res) => {
       return res.status(404).json({ message: "Membro não encontrado." });
     }
 
-    const business = member.business.id(req.params.bid);
+    const business = await Business.findById(req.params.bid);
     if (!business) {
-      return res.status(404).json({ message: "Negócio não encontrado." });
+      return res.status(404).json({ message: "Empresa não encontrada." });
     }
 
     let businessLogoUrl = business.logo;
@@ -333,7 +351,7 @@ memberController.editBusiness = async (req, res) => {
     business.area = req.body.area;
     business.logo = businessLogoUrl;
 
-    await member.save();
+    await business.save();
 
     res.redirect(`/admin/manage-accounts/member/${member.id}`);
   } catch (error) {
@@ -351,16 +369,14 @@ memberController.deleteBusiness = async (req, res) => {
       return res.redirect(`/admin/manage-accounts/member`);
     }
 
-    const businessToDelete = member.business.id(bid);
+    const businessToDelete = await Business.findById(bid);
     if (businessToDelete && businessToDelete.logo) {
       await deleteFromCloudinary(businessToDelete.logo);
     }
 
-    await Member.findByIdAndUpdate(id, {
-      $pull: { business: { _id: bid } },
-    });
+    await Business.findByIdAndDelete(bid);
 
-    res.redirect(`/admin/manage-accounts/member/${id}`);
+    res.redirect(`/admin/manage-accounts/member/${member._id}`);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });

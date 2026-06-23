@@ -52,20 +52,20 @@
                             <a class="btn btn-primary" href="/admin/manage-deals/?namer=<%= member.name %>">Negócios do
                                 Membro</a>
                         </li>
-                        <% if(member.websites.length > 0){%>
-                        <br>
-                        Websites:
-                        <ul>
-                            <% member.websites.forEach(website=> { %>
-                                <li style="color: var(--color-golden)">
-                                    ● 
-                                    <a class="website" href="<%= website.link %>">
-                                        <%= website.name %>
-                                    </a>
-                                </li>
-                                <% }) %>
-                        </ul>
-                        <% } %>
+                        <% if(member.websites.length> 0){%>
+                            <br>
+                            Websites:
+                            <ul>
+                                <% member.websites.forEach(website=> { %>
+                                    <li style="color: var(--color-golden)">
+                                        ●
+                                        <a class="website" href="<%= website.link %>">
+                                            <%= website.name %>
+                                        </a>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                            <% } %>
                     </ul>
                 </div>
                 <div class="form-column">
@@ -86,10 +86,10 @@
         <div class="form-container" style="width: 100%; max-width: 500px;">
             <div class="business-list">
                 <h2>Empresas do Membro</h2>
-                <% member.business.forEach(business=> { %>
+                <% businesses.forEach(business=> { %>
                     <div class="business-card">
-                        <img class="logo" height="100" width="100" src="<%= business.logo || '/assets/defaultLogo.jpg' %>"
-                            alt="Foto de <%= business.name%>">
+                        <img class="logo" height="100" width="100"
+                            src="<%= business.logo || '/assets/defaultLogo.jpg' %>" alt="Foto de <%= business.name%>">
                         <div class="business-info">
                             <ul>
                                 <li>

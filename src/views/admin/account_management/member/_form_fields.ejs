@@ -146,23 +146,6 @@
         hiddenPhoneInput.value = iti.getNumber();
     }
 
-    const imageInput = document.getElementById('imageInput');
-    const imagePreview = document.getElementById('imagePreview');
-
-    imageInput.addEventListener('change', function () {
-        const file = this.files[0];
-
-        if (file) {
-            const tempURL = URL.createObjectURL(file);
-
-            imagePreview.src = tempURL;
-
-            imagePreview.onload = () => {
-                URL.revokeObjectURL(tempURL);
-            };
-        }
-    });
-
     const websitesContainer = document.getElementById('websites-container');
     const addWebsiteBtn = document.getElementById('add-website-btn');
 
@@ -192,6 +175,23 @@
         const deleteBtn = e.target.closest('.btn-danger');
         if (deleteBtn) {
             deleteBtn.parentElement.remove();
+        }
+    });
+
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+
+    imageInput.addEventListener('change', function () {
+        const file = this.files[0];
+
+        if (file) {
+            const tempURL = URL.createObjectURL(file);
+
+            imagePreview.src = tempURL;
+
+            imagePreview.onload = () => {
+                URL.revokeObjectURL(tempURL);
+            };
         }
     });
 

@@ -7,7 +7,7 @@
                     <ul>
                         <h2>Detalhes da Empresa de
                             <br>
-                            <%= member.name %>
+                            <%= business.owner.name %>
                         </h2>
                         <li>
                             Nome:
@@ -41,17 +41,17 @@
             </div>
             <div class="form-options">
                 <a class="btn btn-primary circle"
-                    href="/admin/manage-accounts/member/<%= member.id%>/business/<%= business.id%>/edit">
+                    href="/admin/manage-accounts/member/<%= business.owner.id%>/business/<%= business.id%>/edit">
                     <img class="char" height="20" src="/assets/edit-icon.png">
                 </a>
                 <form
-                    action="/admin/manage-accounts/member/<%= member.id %>/business/<%= business._id %>/delete?_method=PATCH"
+                    action="/admin/manage-accounts/member/<%= business.owner.id %>/business/<%= business._id %>/delete?_method=PATCH"
                     method="POST" onsubmit="return confirm('Tem certeza que deseja remover esta empresa?')">
                     <button class="btn btn-danger circle" type="submit">
                         <img class="char" height="20" src="/assets/trash-can.png">
                     </button>
                 </form>
-                <a class="btn btn-primary" href="/admin/manage-accounts/member/<%= member.id %>">
+                <a class="btn btn-primary" href="/admin/manage-accounts/member/<%= business.owner.id %>">
                     Voltar
                 </a>
             </div>
