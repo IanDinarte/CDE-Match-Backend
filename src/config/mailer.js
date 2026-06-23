@@ -41,7 +41,7 @@ export const sendAdminWelcomeEmail = async (
       <p>A tua conta de administrador foi criada com sucesso.</p>
       <p><strong>Informações de Acesso:</strong></p>
       <ul>
-        <li><strong>Link de Acesso:</strong> ${BACKEND_URL}</li> 
+        <li><a href="${BACKEND_URL}"><strong> Link de Acesso </strong></a></li> 
         <li><strong>Email:</strong> ${adminEmail}</li>
         <li><strong>Password Temporária:</strong> ${password}</li>
       </ul>
@@ -71,11 +71,11 @@ export const sendMemberWelcomeEmail = async (
       </ul>
       <strong>Como instalar:</strong>
       <ul>
-        <li><strong>IPhone/IOS:</strong> Apenas acesse o link: ${FRONTEND_WEB_URL}</li>
+        <li><strong>IPhone/IOS:</strong> <a${FRONTEND_WEB_URL}> Apenas acesse esse link </a></li>
         <li><strong>Android:</strong>
           <ul>
             <li>
-              Acesse o link e clique em "Instalar": <a href="${FRONTEND_APK_URL}"> Link </a>
+              <a href="${FRONTEND_APK_URL}"> Acesse esse link e clique em "Instalar" </a>
             </li>
             <li>
               <strong>
