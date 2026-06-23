@@ -45,9 +45,9 @@ connectDB()
   .then(async () => {
     await seedDefaultAdmin();
 
-    // app.listen(port, () => {
-    //   console.log(`Servidor a rodar na porta ${port}`);
-    // });
+    app.listen(port, () => {
+      console.log(`Servidor a rodar na porta ${port}`);
+    });
   })
   .catch((err) => {
     console.error("ERRO na conexão com MongoDB:", err);
