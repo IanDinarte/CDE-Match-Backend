@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const BACKEND_URL = " ";
+const BACKEND_URL = "https://cdematch.alwaysdata.net/";
 const FRONTEND_WEB_URL = "https://www.vanytime.pt/cdematch.pt/app/";
 const FRONTEND_APK_URL =
   "https://expo.dev/accounts/clube_do_empreendedor/projects/CDEMatch/builds/3bdd5bbd-2dd1-4fa2-ae6f-215d7acda5b6";
