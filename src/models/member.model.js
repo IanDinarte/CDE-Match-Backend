@@ -2,6 +2,21 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import { Business } from "./business.model.js";
 
+const scopes = {
+  Admin: "admin",
+  Member: "member",
+};
+
+let RoleSchema = new Schema({
+  name: { type: String, required: true },
+  scope: [
+    {
+      type: String,
+      enum: [scopes.Member, scopes.Admin],
+    },
+  ],
+});
+
 /**
  * state: estado da conta (ativo ou inativo)
  */
@@ -97,6 +112,10 @@ const MemberSchema = new Schema({
     type: String,
     enum: ["Ativo", "Inativo"],
     default: "Ativo",
+  },
+  role: {
+    type: RoleSchema,
+    default: { name: "Member", scope: ["member"] },
   },
 });
 

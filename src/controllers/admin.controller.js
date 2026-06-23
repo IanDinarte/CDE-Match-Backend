@@ -42,11 +42,11 @@ adminController.newAdmin = async (req, res) => {
 
     const newAdmin = await admin.save();
 
-    // await sendAdminWelcomeEmail(
-    //   req.body.email,
-    //   req.body.name,
-    //   req.body.password,
-    // );
+    await sendAdminWelcomeEmail(
+      req.body.email,
+      req.body.name,
+      req.body.password,
+    );
 
     res.redirect(`/admin/manage-accounts/admin/${newAdmin._id}`);
   } catch (error) {
@@ -99,6 +99,75 @@ adminController.editAdmin = async (req, res) => {
       admin: adminData,
       errorMessage: error.message,
     });
+  }
+};
+
+adminController.changePasswordPage = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user.id);
+
+    return res.render("admin/account_management/admin/changePassword", {
+      admin: admin,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: INTERNAL_ERROR_MSG, error: error.message });
+  }
+};
+
+adminController.changePassword = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user.id);
+
+    if (!admin) {
+      return res.status(404).render("admin/account_management/admin/edit", {
+        admin: admin,
+        errorMessage: "Administrador não encontrado.",
+      });
+    }
+
+    const { oldPassword, newPassword, repeatPassword } = req.body;
+
+    const isOldPasswordCorrect = await admin.comparePassword(oldPassword);
+    if (!isOldPasswordCorrect) {
+      return res
+        .status(400)
+        .render("admin/account_management/admin/changePassword", {
+          admin: admin,
+          errorMessage: "Palavra passe atual incorreta.",
+        });
+    }
+
+    if (newPassword !== repeatPassword) {
+      return res
+        .status(400)
+        .render("admin/account_management/admin/changePassword", {
+          admin: admin,
+          errorMessage: "A palavra passe nova e a repetição devem ser iguais.",
+        });
+    }
+
+    const isSameAsOld = await admin.comparePassword(newPassword);
+    if (isSameAsOld) {
+      return res
+        .status(400)
+        .render("admin/account_management/admin/changePassword", {
+          admin: admin,
+          errorMessage: "Palavra passe nova é igual à antiga.",
+        });
+    }
+
+    admin.password = newPassword;
+
+    await admin.save();
+
+    return res.redirect(`/admin/manage-accounts/admin/${admin.id}`);
+  } catch (error) {
+    console.log(error.message);
+    res
+      .status(500)
+      .json({ message: INTERNAL_ERROR_MSG, error: error.message })
+      .redirect("admin/manage-accounts/admin/password");
   }
 };
 

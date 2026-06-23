@@ -80,11 +80,11 @@ memberController.newMember = async (req, res) => {
 
     const newMember = await member.save();
 
-    // await sendMemberWelcomeEmail(
-    //   req.body.email,
-    //   req.body.name,
-    //   req.body.password,
-    // );
+    await sendMemberWelcomeEmail(
+      req.body.email,
+      req.body.name,
+      req.body.password,
+    );
 
     res.redirect(`/admin/manage-accounts/member/${newMember._id}`);
   } catch (error) {
