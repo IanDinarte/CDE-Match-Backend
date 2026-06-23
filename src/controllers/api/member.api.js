@@ -9,7 +9,9 @@ const memberApi = {};
 memberApi.listMembers = async (req, res) => {
   try {
     const { name } = req.query;
-    let searchOptions = {};
+    let searchOptions = {
+      "role.name": "Member",
+    };
 
     if (name && name.trim() !== "") {
       searchOptions.name = new RegExp(name, "i");
@@ -38,7 +40,10 @@ memberApi.listMemberSuggest = async (req, res) => {
   }
 
   try {
-    const memberList = await Member.find({ _id: { $nin: idsToExclude } }).sort({
+    const memberList = await Member.find({
+      _id: { $nin: idsToExclude },
+      "role.name": "Member",
+    }).sort({
       name: 1,
     });
 
@@ -139,6 +144,8 @@ memberApi.memberProfile = async (req, res) => {
 
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
+
+    member.business = await Business.find({ owner: member._id });
 
     return res.status(200).json(member);
   } catch (error) {
@@ -253,7 +260,6 @@ memberApi.changePassword = async (req, res) => {
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 
-    // fazer isso pra todos os erros que vao pro frontend?
     if (error.name === "ValidationError") {
       const frontendError = error.message.split(":")[2].trim();
       return res.status(500).json(frontendError);
@@ -284,11 +290,10 @@ memberApi.addBusiness = async (req, res) => {
       description: req.body.description,
       area: req.body.area,
       logo: businessLogoUri,
+      owner: member._id,
     });
 
-    member.business.push(business);
-
-    await member.save();
+    await business.save();
 
     return res.status(201).json("Empresa Criada com Sucesso.");
   } catch (error) {
@@ -310,7 +315,7 @@ memberApi.editBusiness = async (req, res) => {
       return res.status(404).json("Membro não encontrado.");
     }
 
-    const business = member.business.id(req.params.bid);
+    const business = await Business.findById(req.params.bid);
     if (!business) {
       return res.status(404).json("Negócio não encontrado.");
     }
@@ -334,7 +339,7 @@ memberApi.editBusiness = async (req, res) => {
     business.description = req.body.description;
     business.area = req.body.area;
 
-    await member.save();
+    await business.save();
 
     return res.status(200).json("Empressa editada com Sucesso.");
   } catch (error) {
@@ -358,14 +363,12 @@ memberApi.deleteBusiness = async (req, res) => {
       return res.status(404).json("Membro não encontrado.");
     }
 
-    const businessToDelete = member.business.id(bid);
+    const businessToDelete = await Business.findById(bid);
     if (businessToDelete && businessToDelete.logo) {
       await deleteFromCloudinary(businessToDelete.logo);
     }
 
-    await Member.findByIdAndUpdate(id, {
-      $pull: { business: { _id: bid } },
-    });
+    await Business.findByIdAndDelete(bid);
 
     return res.status(200).json("Empresa deletada com Sucesso.");
   } catch (error) {

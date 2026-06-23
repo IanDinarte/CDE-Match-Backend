@@ -30,11 +30,10 @@
 
         <input type="hidden" name="removeBusinessLogo" id="removeBusinessLogo" value="false">
 
-        <% if (business.logo) { %>
-            <button type="button" class="btn btn-danger" id="remove-logo-btn" style="margin-top: 10px;">
-                Remover Logo da Empresa
-            </button>
-            <% } %>
+        <button type="button" class="btn btn-danger" id="remove-logo-btn" <%=!business.logo
+            ? 'style="display: none; margin-top: 10px;"' : 'style="margin-top: 10px;"' %>>
+            Remover Logo da Empresa
+        </button>
     </div>
 </div>
 
@@ -62,12 +61,16 @@
     if (removeLogoBtn) {
         removeLogoBtn.addEventListener('click', () => {
             imagePreview.src = '/assets/defaultLogo.png';
-
             imageInput.value = '';
-
             removeBusinessLogoInput.value = 'true';
-
             removeLogoBtn.style.display = 'none';
         });
     }
+
+    imageInput.addEventListener('change', function () {
+        if (this.files[0]) {
+            if (removeLogoBtn) removeLogoBtn.style.display = 'block';
+            removeBusinessLogoInput.value = 'false';
+        }
+    });
 </script>

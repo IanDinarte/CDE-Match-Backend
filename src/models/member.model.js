@@ -98,7 +98,7 @@ const MemberSchema = new Schema({
       ref: "Deal",
     },
   ],
-  business: [Business.schema],
+  // business: [Business.schema],
   matchedDeals: [
     {
       type: Schema.Types.ObjectId,

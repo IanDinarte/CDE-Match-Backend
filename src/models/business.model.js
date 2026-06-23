@@ -21,6 +21,10 @@ const BusinessSchema = new Schema({
     type: String,
     required: false,
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "Member",
+  },
 });
 
 export const Business = mongoose.model("Business", BusinessSchema);
