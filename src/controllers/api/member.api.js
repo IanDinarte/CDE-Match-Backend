@@ -9,7 +9,9 @@ const memberApi = {};
 memberApi.listMembers = async (req, res) => {
   try {
     const { name } = req.query;
-    let searchOptions = {};
+    let searchOptions = {
+      "role.name": "Member",
+    };
 
     if (name && name.trim() !== "") {
       searchOptions.name = new RegExp(name, "i");
@@ -38,7 +40,10 @@ memberApi.listMemberSuggest = async (req, res) => {
   }
 
   try {
-    const memberList = await Member.find({ _id: { $nin: idsToExclude } }).sort({
+    const memberList = await Member.find({
+      _id: { $nin: idsToExclude },
+      "role.name": "Member",
+    }).sort({
       name: 1,
     });
 

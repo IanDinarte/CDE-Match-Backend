@@ -136,6 +136,7 @@ memberController.memberProfile = async (req, res) => {
 memberController.editMemberPage = async (req, res) => {
   try {
     const member = await Member.findById(req.params.id);
+    
     res.render("admin/account_management/member/edit", { member: member });
   } catch (error) {
     console.log(error.message);
