@@ -1,8 +1,13 @@
 import nodemailer from "nodemailer";
 
+const BACKEND_URL = " ";
+const FRONTEND_WEB_URL = "https://www.vanytime.pt/cdematch.pt/app/";
+const FRONTEND_APK_URL =
+  "https://expo.dev/accounts/clube_do_empreendedor/projects/CDEMatch/builds/3bdd5bbd-2dd1-4fa2-ae6f-215d7acda5b6";
+
 const transporter = nodemailer.createTransport({
-  // host: "smtp.gmail.com",
-  host: 'mail.cdematch.pt',
+  host: "smtp.gmail.com",
+  // host: "mail.cdematch.pt",
   port: 465,
   secure: true,
   auth: {
@@ -36,7 +41,7 @@ export const sendAdminWelcomeEmail = async (
       <p>A tua conta de administrador foi criada com sucesso.</p>
       <p><strong>Informações de Acesso:</strong></p>
       <ul>
-        <li><strong>URL:</strong> http://cdematch.pt/api/auth/login</li>
+        <li><strong>Link de Acesso:</strong> ${BACKEND_URL}</li> 
         <li><strong>Email:</strong> ${adminEmail}</li>
         <li><strong>Password Temporária:</strong> ${password}</li>
       </ul>
@@ -61,9 +66,24 @@ export const sendMemberWelcomeEmail = async (
       <p>A tua conta de membro foi criada com sucesso.</p>
       <p><strong>Informações de Acesso:</strong></p>
       <ul>
-        <li><strong>URL:</strong> link do web frontend e link para instalar o apk</li>
         <li><strong>Email:</strong> ${memberEmail}</li>
         <li><strong>Password Temporária:</strong> ${password}</li>
+      </ul>
+      <strong>Como instalar:</strong>
+      <ul>
+        <li><strong>IPhone/IOS:</strong> Apenas acesse o link: ${FRONTEND_WEB_URL}</li>
+        <li><strong>Android:</strong>
+          <ul>
+            <li>
+              Acesse o link e clique em "Instalar": <a href="${FRONTEND_APK_URL}"> Link </a>
+            </li>
+            <li>
+              <strong>
+                Caso a instação seja bloqueada, clique em "Mais detalhes" e em seguida em "Instalar mesmo assim".
+              </strong>
+            </li>
+          </ul>
+        </li>
       </ul>
       <p>Por segurança, recomendamos que alteres a tua password após o primeiro login.</p>
     `,
