@@ -126,24 +126,24 @@ memberApi.memberProfile = async (req, res) => {
       member.deals.forEach((deal) => {
         deal.isMatched = matchedDealsSet.has(deal._id.toString());
       });
+
+      const ordemEstados = {
+        Disponivel: 1,
+        Fechado: 2,
+        Cancelado: 3,
+      };
+
+      member.deals.sort((a, b) => {
+        const pesoA = ordemEstados[a.state] || 4;
+        const pesoB = ordemEstados[b.state] || 4;
+
+        if (pesoA !== pesoB) {
+          return pesoA - pesoB;
+        }
+
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
     }
-
-    const ordemEstados = {
-      Disponivel: 1,
-      Fechado: 2,
-      Cancelado: 3,
-    };
-
-    member.deals.sort((a, b) => {
-      const pesoA = ordemEstados[a.state] || 4;
-      const pesoB = ordemEstados[b.state] || 4;
-
-      if (pesoA !== pesoB) {
-        return pesoA - pesoB;
-      }
-
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    });
 
     member.business = await Business.find({ owner: member._id });
 
