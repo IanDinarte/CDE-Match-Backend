@@ -6,4 +6,8 @@ const router = Router();
 
 router.use("/login", authApi.login);
 
+router.route("/resetPassword").post(authApi.resetPassword);
+
+router.route("/resetPassword").patch(authApi.changePassword);
+
 export default router

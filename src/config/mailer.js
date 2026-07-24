@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 const BACKEND_URL = "https://cdematch.alwaysdata.net/";
-const FRONTEND_WEB_URL = "https://www.vanytime.pt/cdematch.pt/app/";
+const FRONTEND_WEB_URL = "https://www.vanytime.pt/cdematch";
 const FRONTEND_APK_URL =
   "https://expo.dev/accounts/clube_do_empreendedor/projects/CDEMatch/builds/3bdd5bbd-2dd1-4fa2-ae6f-215d7acda5b6";
 
@@ -71,7 +71,7 @@ export const sendMemberWelcomeEmail = async (
       </ul>
       <strong>Como instalar:</strong>
       <ul>
-        <li><strong>IPhone/IOS:</strong> <a${FRONTEND_WEB_URL}> Apenas acesse esse link </a></li>
+        <li><strong>IPhone/IOS:</strong> <a href="${FRONTEND_WEB_URL}"> Apenas acesse esse link </a></li>
         <li><strong>Android:</strong>
           <ul>
             <li>
@@ -86,6 +86,22 @@ export const sendMemberWelcomeEmail = async (
         </li>
       </ul>
       <p>Por segurança, recomendamos que alteres a tua password após o primeiro login.</p>
+    `,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
+export const sendResetPasswordEmail = async (email, token) => {
+  const mailOptions = {
+    from: `"Equipa CDE Match" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Recuperação de Senha",
+    html: `
+      <h1>Recuperação de senha da sua conta CDE Match</h1>
+      <p>Aqui está o seu código de recuperação de senha, <strong>não o mostre para ninguém</strong>.</p>
+      <p>Seu código: <strong>${token}</strong></p>
+      <p>Se você não fez esse pedido, ignore esse email e comunique o suporte.</p>
     `,
   };
 
