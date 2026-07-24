@@ -256,7 +256,7 @@ memberApi.changePassword = async (req, res) => {
 
     await member.save();
 
-    return res.status(200).json("Senha alterada com sucesso!");
+    return res.status(200).json("Senha alterada com sucesso.");
   } catch (error) {
     console.log(INTERNAL_ERROR_MSG + " " + error.message);
 
