@@ -98,7 +98,6 @@ const MemberSchema = new Schema({
       ref: "Deal",
     },
   ],
-  // business: [Business.schema],
   matchedDeals: [
     {
       type: Schema.Types.ObjectId,
@@ -137,11 +136,6 @@ MemberSchema.virtual("age").get(function () {
 
   return age;
 });
-
-// MemberSchema.virtual("dateOfBirthFormatted").get(function () {
-//   if (!this.dateOfBirth) return "";
-//   return this.dateOfBirth.toISOString().split("T")[0];
-// });
 
 MemberSchema.virtual("dateOfBirthFormatted").get(function () {
   if (!this.dateOfBirth || !(this.dateOfBirth instanceof Date)) return "";
